@@ -1050,7 +1050,11 @@ async function agregarPlatilloRegular() {
 let respaldoTimer = null
 
 onMounted(async () => {
-  await Promise.all([cargarCola(), cargarCatalogo()])
+  try {
+    await Promise.all([cargarCola(), cargarCatalogo()])
+  } catch (err) {
+    errorOperacion.value = extraerMensajeError(err, 'No se pudo cargar la información inicial')
+  }
 
   timer = setInterval(() => {
     ahoraMs.value = Date.now()

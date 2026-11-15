@@ -10,6 +10,10 @@ public class MainActivity extends BridgeActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if (getBridge() != null && getBridge().getWebView() != null) {
+            getBridge().getWebView().clearCache(true);
+        }
+
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {

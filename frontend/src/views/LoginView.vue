@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-[100dvh] bg-[#F4F6F9] flex flex-col justify-center py-8 px-4">
+  <div class="flex-1 bg-[#F4F6F9] flex flex-col justify-center py-8 px-4">
     <div class="max-w-md w-full mx-auto space-y-4">
       <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
         <div class="bg-uv-azul text-white px-6 py-5 border-b-[3px] border-uv-verde">
@@ -131,6 +131,10 @@
               {{ cargando ? 'Creando cuenta...' : 'Crear cuenta de estudiante' }}
             </button>
           </form>
+
+          <p v-if="cargando && esperaExtendida" class="mt-3 text-xs text-center text-slate-500">
+            Conectando con el servidor, el primer acceso tras inactividad puede tardar unos segundos...
+          </p>
         </div>
       </div>
 
@@ -161,7 +165,7 @@
         </div>
       </div>
 
-      <div v-if="appMovil" class="bg-white border border-slate-200 rounded-xl shadow-sm p-4 space-y-2.5">
+      <div v-if="appMovil && modoDemo" class="bg-white border border-slate-200 rounded-xl shadow-sm p-4 space-y-2.5">
         <div class="flex items-center justify-between gap-2">
           <h2 class="text-xs font-semibold uppercase tracking-wide text-slate-500">
             Servidor backend (móvil)
@@ -224,7 +228,7 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue'
+import { onMounted, onUnmounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import api, { extraerMensajeError } from '../services/api'
 import { guardarSesion } from '../stores/sesion'
@@ -240,7 +244,9 @@ import {
 const router = useRouter()
 const modo = ref('login')
 const cargando = ref(false)
+const esperaExtendida = ref(false)
 const error = ref('')
+let temporizadorEspera = null
 const appMovil = esAppMovil()
 const modoDemo = esModoDemo()
 const mostrarConfigServidor = ref(false)
@@ -307,9 +313,27 @@ function redirigirPorRol(rol) {
   }
 }
 
+function iniciarTemporizadorEspera() {
+  detenerTemporizadorEspera()
+  temporizadorEspera = setTimeout(() => {
+    if (cargando.value) {
+      esperaExtendida.value = true
+    }
+  }, 3500)
+}
+
+function detenerTemporizadorEspera() {
+  if (temporizadorEspera) {
+    clearTimeout(temporizadorEspera)
+    temporizadorEspera = null
+  }
+  esperaExtendida.value = false
+}
+
 async function enviarLogin() {
   error.value = ''
   cargando.value = true
+  iniciarTemporizadorEspera()
   try {
     const { data } = await api.post('/auth/login', formLogin)
     guardarSesion(data.token, data.usuario)
@@ -317,6 +341,7 @@ async function enviarLogin() {
   } catch (err) {
     error.value = extraerMensajeError(err, 'No se pudo iniciar sesión')
   } finally {
+    detenerTemporizadorEspera()
     cargando.value = false
   }
 }
@@ -324,6 +349,7 @@ async function enviarLogin() {
 async function enviarRegistro() {
   error.value = ''
   cargando.value = true
+  iniciarTemporizadorEspera()
   try {
     const { data } = await api.post('/auth/registro', formRegistro)
     guardarSesion(data.token, data.usuario)
@@ -331,9 +357,18 @@ async function enviarRegistro() {
   } catch (err) {
     error.value = extraerMensajeError(err, 'No se pudo completar el registro')
   } finally {
+    detenerTemporizadorEspera()
     cargando.value = false
   }
 }
+
+onMounted(() => {
+  api.get('/salud').catch(() => {})
+})
+
+onUnmounted(() => {
+  detenerTemporizadorEspera()
+})
 
 async function entrarConDemo(credencial) {
   modo.value = 'login'

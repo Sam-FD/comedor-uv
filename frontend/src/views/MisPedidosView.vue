@@ -158,7 +158,11 @@ async function alActualizarPorVencimiento() {
 let respaldoTimer = null
 
 onMounted(async () => {
-  await Promise.all([refrescarPerfil(), cargarPedidos()])
+  try {
+    await Promise.all([refrescarPerfil(), cargarPedidos()])
+  } catch {
+    avisoEstado.value = 'No se pudo actualizar el historial de pedidos en este momento.'
+  }
 
   respaldoTimer = setInterval(() => {
     if (!socketConectado.value) {
@@ -170,7 +174,7 @@ onMounted(async () => {
     suscribirEvento('pedido_actualizado', (pedido) => {
       cargarPedidos()
       if (pedido?.estadoPedido === 'listo_para_recoger') {
-        avisoEstado.value = `Tu pedido ${pedido.referencia} ya esta listo para recoger.`
+        avisoEstado.value = `Tu pedido ${pedido.referencia} ya está listo para recoger.`
       } else if (pedido?.estadoPedido === 'entregado') {
         avisoEstado.value = `Tu pedido ${pedido.referencia} fue entregado.`
       } else if (pedido?.estadoPedido === 'no_reclamado') {

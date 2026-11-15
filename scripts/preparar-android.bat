@@ -4,33 +4,49 @@ setlocal
 cd /d "%~dp0\..\frontend"
 
 echo ==================================================
-echo   Comedor UV - Sincronizando app Android
+echo   Comedor UV - Compilando y empaquetando APK
 echo ==================================================
 echo.
 
-echo [1/2] Compilando aplicacion web con Vite...
+echo [1/3] Compilando aplicacion web con Vite...
 call npm.cmd run build
 if errorlevel 1 (
     echo ERROR al compilar el frontend.
-    pause
+    if /I not "%~1"=="nopause" pause
     exit /b 1
 )
 
 echo.
-echo [2/2] Copiando recursos a frontend\android con Capacitor...
+echo [2/3] Sincronizando recursos con Capacitor Android...
 call npx.cmd cap sync android
 if errorlevel 1 (
     echo ERROR al sincronizar Capacitor Android.
-    pause
+    if /I not "%~1"=="nopause" pause
     exit /b 1
 )
 
 echo.
-if exist "%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe" (
-    "%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe" reverse tcp:8080 tcp:8080 > nul 2>&1
-    "%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe" reverse tcp:9092 tcp:9092 > nul 2>&1
+echo [3/3] Compilando APK con Gradle y copiando a docs\comedor-uv.apk...
+pushd android
+call gradlew.bat assembleDebug
+set "GRADLE_ERR=%ERRORLEVEL%"
+popd
+if not "%GRADLE_ERR%"=="0" (
+    echo ERROR al compilar el APK con Gradle.
+    if /I not "%~1"=="nopause" pause
+    exit /b %GRADLE_ERR%
 )
-echo Listo. Abrir frontend\android en Android Studio para compilar o ejecutar.
-echo Con el telefono por USB usar http://127.0.0.1:8080 y en emulador http://10.0.2.2:8080.
+
+if not exist "..\docs" mkdir "..\docs"
+copy /Y "android\app\build\outputs\apk\debug\app-debug.apk" "..\docs\comedor-uv.apk" > nul
+if errorlevel 1 (
+    echo ERROR al copiar el APK a docs\comedor-uv.apk.
+    if /I not "%~1"=="nopause" pause
+    exit /b 1
+)
+
 echo.
-pause
+echo Listo. APK generado en docs\comedor-uv.apk conectado al servidor en la nube.
+echo Tambien queda disponible en frontend\android\app\build\outputs\apk\debug\app-debug.apk.
+echo.
+if /I not "%~1"=="nopause" pause

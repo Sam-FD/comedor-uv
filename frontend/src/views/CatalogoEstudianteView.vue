@@ -3,6 +3,20 @@
     <BannerRestriccion v-if="sesion.usuario" :usuario="sesion.usuario" />
 
     <div
+      v-if="errorCatalogo"
+      class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 shadow-sm flex flex-wrap items-center justify-between gap-2"
+    >
+      <span>{{ errorCatalogo }}</span>
+      <button
+        type="button"
+        @click="recargarTodo"
+        class="px-3 py-1 rounded-md bg-red-600 hover:bg-red-700 text-white text-xs font-semibold shrink-0"
+      >
+        Reintentar
+      </button>
+    </div>
+
+    <div
       v-if="!catalogo.recepcionAbierta"
       class="rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900 shadow-sm"
     >
@@ -63,7 +77,10 @@
             <span class="text-xs text-uv-verde-oscuro font-medium">Menú completo del día</span>
           </div>
 
-          <div v-if="comidasDelTurno.length > 0" class="grid grid-cols-1 gap-3">
+          <div v-if="cargandoCatalogo && catalogo.comidasDelDia.length === 0 && catalogo.menuRegular.length === 0" class="bg-white border border-slate-200 rounded-xl p-5 text-sm text-slate-500 shadow-sm">
+            Cargando menú disponible...
+          </div>
+          <div v-else-if="comidasDelTurno.length > 0" class="grid grid-cols-1 gap-3">
             <TarjetaPlatillo
               v-for="comida in comidasDelTurno"
               :key="comida.id"
@@ -74,7 +91,7 @@
               @agregar="agregarAlCarrito"
             />
           </div>
-          <div v-else class="bg-white border border-slate-200 rounded-xl p-5 text-sm text-slate-500 shadow-sm">
+          <div v-else-if="!errorCatalogo" class="bg-white border border-slate-200 rounded-xl p-5 text-sm text-slate-500 shadow-sm">
             El personal aún no publica la comida del día para el turno {{ turnoSeleccionado }}.
           </div>
         </section>
@@ -152,7 +169,7 @@
       class="lg:hidden fixed inset-0 bg-slate-900/40 z-40 flex items-end"
       @click.self="mostrarCarritoMovil = false"
     >
-      <div class="w-full bg-white rounded-t-2xl border-t border-slate-200 p-5 max-h-[85vh] overflow-y-auto space-y-3">
+      <div class="w-full bg-white rounded-t-2xl border-t border-slate-200 p-5 pb-[max(1.25rem,calc(var(--safe-area-inset-bottom,0px)+0.75rem))] max-h-[85vh] overflow-y-auto space-y-3">
         <div class="flex justify-end">
           <button
             type="button"
@@ -212,6 +229,8 @@ const pedidoActivo = ref(null)
 const enviando = ref(false)
 const errorPedido = ref('')
 const avisoEnVivo = ref('')
+const cargandoCatalogo = ref(true)
+const errorCatalogo = ref('')
 const mostrarCarritoMovil = ref(false)
 const estadoPasarela = ref(null)
 
@@ -245,6 +264,8 @@ const totalArticulos = computed(() => {
 async function cargarCatalogo() {
   const { data } = await api.get('/platillos')
   catalogo.value = data
+  errorCatalogo.value = ''
+  cargandoCatalogo.value = false
 
   if (!turnoInicialAplicado) {
     turnoSeleccionado.value = data.turnoSugerido || 'matutino'
@@ -375,12 +396,26 @@ async function cargarEstadoPasarela() {
 
 let respaldoTimer = null
 
-onMounted(async () => {
-  await refrescarPerfil()
-  if (soloAppTarjeta.value) {
-    modalidadPago.value = 'app_tarjeta'
+async function recargarTodo() {
+  errorCatalogo.value = ''
+  if (catalogo.value.comidasDelDia.length === 0 && catalogo.value.menuRegular.length === 0) {
+    cargandoCatalogo.value = true
   }
-  await Promise.all([cargarCatalogo(), cargarPedidoActivo(), cargarEstadoPasarela()])
+  try {
+    await refrescarPerfil()
+    if (soloAppTarjeta.value) {
+      modalidadPago.value = 'app_tarjeta'
+    }
+    await Promise.all([cargarCatalogo(), cargarPedidoActivo(), cargarEstadoPasarela()])
+  } catch (err) {
+    errorCatalogo.value = extraerMensajeError(err, 'No se pudo cargar el menú del comedor.')
+  } finally {
+    cargandoCatalogo.value = false
+  }
+}
+
+onMounted(async () => {
+  await recargarTodo()
 
   respaldoTimer = setInterval(() => {
     if (!socketConectado.value) {
@@ -408,7 +443,7 @@ onMounted(async () => {
       } else {
         pedidoActivo.value = pedido
         if (pedido.estadoPedido === 'listo_para_recoger') {
-          avisoEnVivo.value = `Tu pedido ${pedido.referencia} ya esta listo para recoger en mostrador.`
+          avisoEnVivo.value = `Tu pedido ${pedido.referencia} ya está listo para recoger en mostrador.`
         }
       }
     }),

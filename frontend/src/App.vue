@@ -1,7 +1,7 @@
 <template>
-  <div class="min-h-[100dvh] flex flex-col bg-[#F4F6F9] text-slate-900">
+  <div class="flex-1 flex flex-col bg-[#F4F6F9] text-slate-900">
     <BarraNavegacion v-if="sesion.usuario" />
-    <main class="flex-1">
+    <main class="flex-1 flex flex-col">
       <RouterView />
     </main>
   </div>

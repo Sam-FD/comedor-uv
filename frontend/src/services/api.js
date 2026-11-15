@@ -3,6 +3,7 @@ import { esAppMovil, obtenerApiBaseUrl } from '../utils/entorno'
 
 const api = axios.create({
   baseURL: obtenerApiBaseUrl(),
+  timeout: 45000,
   headers: {
     'Content-Type': 'application/json'
   }
@@ -57,7 +58,16 @@ api.interceptors.response.use(
 )
 
 export function extraerMensajeError(error, respaldo = 'Ocurrió un error inesperado') {
-  return error?.response?.data?.mensaje || error?.message || respaldo
+  if (error?.response?.data?.mensaje) {
+    return error.response.data.mensaje
+  }
+  if (error?.code === 'ECONNABORTED' || /timeout/i.test(error?.message || '')) {
+    return 'El servidor está tardando en responder. Intenta nuevamente en unos segundos.'
+  }
+  if (!error?.response) {
+    return 'No se pudo conectar con el servidor. Verifica tu conexión a internet e intenta de nuevo.'
+  }
+  return error?.message || respaldo
 }
 
 export default api
