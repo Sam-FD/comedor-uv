@@ -34,39 +34,39 @@ public class ManejadorGlobalExcepciones {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> manejarValidacion(MethodArgumentNotValidException ex) {
         FieldError primerError = ex.getBindingResult().getFieldErrors().stream().findFirst().orElse(null);
-        String mensaje = primerError != null ? primerError.getDefaultMessage() : "Datos invalidos en la solicitud";
+        String mensaje = primerError != null ? primerError.getDefaultMessage() : "Datos inválidos en la solicitud";
         return construirRespuesta(HttpStatus.BAD_REQUEST, mensaje);
     }
 
     @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> manejarJsonInvalido(org.springframework.http.converter.HttpMessageNotReadableException ex) {
-        return construirRespuesta(HttpStatus.BAD_REQUEST, "Formato de solicitud JSON invalido");
+        return construirRespuesta(HttpStatus.BAD_REQUEST, "Formato de solicitud JSON inválido");
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ErrorResponse> manejarTipoParametroInvalido(MethodArgumentTypeMismatchException ex) {
-        return construirRespuesta(HttpStatus.BAD_REQUEST, "Valor invalido para el parametro '" + ex.getName() + "'");
+        return construirRespuesta(HttpStatus.BAD_REQUEST, "Valor inválido para el parámetro '" + ex.getName() + "'");
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<ErrorResponse> manejarParametroFaltante(MissingServletRequestParameterException ex) {
-        return construirRespuesta(HttpStatus.BAD_REQUEST, "Falta el parametro obligatorio '" + ex.getParameterName() + "'");
+        return construirRespuesta(HttpStatus.BAD_REQUEST, "Falta el parámetro obligatorio '" + ex.getParameterName() + "'");
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ErrorResponse> manejarMetodoNoSoportado(HttpRequestMethodNotSupportedException ex) {
-        return construirRespuesta(HttpStatus.METHOD_NOT_ALLOWED, "Metodo HTTP no permitido para esta ruta");
+        return construirRespuesta(HttpStatus.METHOD_NOT_ALLOWED, "Método HTTP no permitido para esta ruta");
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponse> manejarConflictoDatos(DataIntegrityViolationException ex) {
-        return construirRespuesta(HttpStatus.CONFLICT, "No se pudo completar la operacion por conflicto con datos existentes");
+        return construirRespuesta(HttpStatus.CONFLICT, "No se pudo completar la operación por conflicto con datos existentes");
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> manejarErrorInesperado(Exception ex) {
         log.error("Error inesperado no controlado en API REST", ex);
-        return construirRespuesta(HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrio un error interno al procesar la solicitud");
+        return construirRespuesta(HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrió un error interno al procesar la solicitud");
     }
 
     private ResponseEntity<ErrorResponse> construirRespuesta(HttpStatus status, String mensaje) {

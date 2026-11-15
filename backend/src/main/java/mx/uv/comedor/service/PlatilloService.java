@@ -69,7 +69,7 @@ public class PlatilloService {
         String turno = request.turno().trim().toLowerCase();
         if (!ConstantesComedor.TURNO_MATUTINO.equals(turno)
                 && !ConstantesComedor.TURNO_VESPERTINO.equals(turno)) {
-            throw new ReglaNegocioException("La comida del dia solo puede ser matutina o vespertina");
+            throw new ReglaNegocioException("La comida del día solo puede ser matutina o vespertina");
         }
 
         LocalDate hoy = LocalDate.now();
@@ -123,7 +123,7 @@ public class PlatilloService {
 
         if (!ConstantesComedor.MENU_REGULAR.equals(platillo.getTipoMenu())) {
             throw new ReglaNegocioException(
-                    "La comida del dia no se edita; publica una nueva para conservar el historico"
+                    "La comida del día no se edita; se debe publicar una nueva para conservar el histórico"
             );
         }
 

@@ -44,13 +44,13 @@ public class AuthService {
         Usuario usuario = usuarioRepository.findByCredencialInstitucionalIgnoreCase(entrada)
                 .or(() -> usuarioRepository.findByCorreoIgnoreCase(entrada))
                 .orElseThrow(() -> new ReglaNegocioException(
-                        "Credenciales incorrectas. Verifica tu matricula y contraseña.",
+                        "Credenciales incorrectas. Verifica tu matrícula y contraseña.",
                         HttpStatus.UNAUTHORIZED
                 ));
 
         if (!passwordEncoder.matches(request.password(), usuario.getPasswordHash())) {
             throw new ReglaNegocioException(
-                    "Credenciales incorrectas. Verifica tu matricula y contraseña.",
+                    "Credenciales incorrectas. Verifica tu matrícula y contraseña.",
                     HttpStatus.UNAUTHORIZED
             );
         }
@@ -69,7 +69,7 @@ public class AuthService {
         String correo = request.correo().trim().toLowerCase();
 
         if (usuarioRepository.existsByCredencialInstitucionalIgnoreCase(credencial)) {
-            throw new ReglaNegocioException("Ya existe una cuenta registrada con esa matricula", HttpStatus.CONFLICT);
+            throw new ReglaNegocioException("Ya existe una cuenta registrada con esa matrícula", HttpStatus.CONFLICT);
         }
         if (usuarioRepository.existsByCorreoIgnoreCase(correo)) {
             throw new ReglaNegocioException("Ya existe una cuenta registrada con ese correo", HttpStatus.CONFLICT);

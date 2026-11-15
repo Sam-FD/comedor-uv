@@ -61,7 +61,7 @@ public class SecurityConfig {
                 )
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint((req, res, authEx) ->
-                                escribirErrorJson(res, HttpStatus.UNAUTHORIZED, "Debes iniciar sesion para continuar"))
+                                escribirErrorJson(res, HttpStatus.UNAUTHORIZED, "Debes iniciar sesión para continuar"))
                         .accessDeniedHandler((req, res, deniedEx) ->
                                 escribirErrorJson(res, HttpStatus.FORBIDDEN, "No tienes permisos para acceder a este modulo"))
                 )

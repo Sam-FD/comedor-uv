@@ -68,13 +68,13 @@ public class PasarelaPagoService {
         String modo = usaStripeReal() ? MODO_STRIPE_TEST : MODO_SANDBOX_LOCAL;
         String nombre = usaStripeReal()
                 ? "Stripe Sandbox (modo prueba)"
-                : "Pasarela Sandbox local (emulacion Stripe)";
+                : "Pasarela Sandbox local (emulación Stripe)";
 
         List<EstadoPasarelaResponse.TarjetaPruebaInfo> tarjetas = List.of(
                 new EstadoPasarelaResponse.TarjetaPruebaInfo(
                         "Visa prueba aprobada",
                         "4242 4242 4242 4242",
-                        "Autoriza retencion de fondos"
+                        "Autoriza retención de fondos"
                 ),
                 new EstadoPasarelaResponse.TarjetaPruebaInfo(
                         "Visa prueba declinada",
@@ -110,7 +110,7 @@ public class PasarelaPagoService {
         if (!usaStripeReal()) {
             if (esTarjetaDeclinada) {
                 throw new ReglaNegocioException(
-                        "Pago rechazado en pasarela de prueba: la tarjeta terminacion 0002 fue declinada.",
+                        "Pago rechazado en pasarela de prueba: la tarjeta terminación 0002 fue declinada.",
                         HttpStatus.PAYMENT_REQUIRED
                 );
             }
@@ -148,7 +148,7 @@ public class PasarelaPagoService {
 
         if (!"requires_capture".equals(estadoStripe)) {
             throw new ReglaNegocioException(
-                    "Stripe no dejo el pago listo para retencion (estado recibido: " + estadoStripe + ")",
+                    "Stripe no dejó el pago listo para retención (estado recibido: " + estadoStripe + ")",
                     HttpStatus.PAYMENT_REQUIRED
             );
         }
@@ -229,7 +229,7 @@ public class PasarelaPagoService {
         try {
             enviarPostStripe(STRIPE_API_BASE + "/" + transaccion.transaccionId() + "/cancel", Map.of());
         } catch (Exception ex) {
-            log.warn("No se pudo liberar la retencion huerfana {}: {}", transaccion.transaccionId(), ex.getMessage());
+            log.warn("No se pudo liberar la retención huérfana {}: {}", transaccion.transaccionId(), ex.getMessage());
         }
     }
 
@@ -272,11 +272,11 @@ public class PasarelaPagoService {
             throw ex;
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
-            throw new ReglaNegocioException("Se interrumpio la comunicacion con Stripe Sandbox", HttpStatus.BAD_GATEWAY);
+            throw new ReglaNegocioException("Se interrumpió la comunicación con Stripe Sandbox", HttpStatus.BAD_GATEWAY);
         } catch (IOException ex) {
             log.warn("Error de red comunicando con Stripe Sandbox: {}", ex.getMessage());
             throw new ReglaNegocioException(
-                    "No se pudo conectar con Stripe Sandbox. Verifica tu conexion a internet o la clave sk_test.",
+                    "No se pudo conectar con Stripe Sandbox. Verificar la conexión a internet y la clave configurada.",
                     HttpStatus.BAD_GATEWAY
             );
         }

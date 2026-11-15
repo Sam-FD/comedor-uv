@@ -5,14 +5,14 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public record RegistroRequest(
-        @NotBlank(message = "La matricula institucional es obligatoria")
-        @Size(max = 30, message = "La matricula no puede exceder 30 caracteres")
+        @NotBlank(message = "La matrícula institucional es obligatoria")
+        @Size(max = 30, message = "La matrícula no puede exceder 30 caracteres")
         String credencialInstitucional,
         @NotBlank(message = "El nombre completo es obligatorio")
         @Size(max = 100, message = "El nombre no puede exceder 100 caracteres")
         String nombre,
         @NotBlank(message = "El correo es obligatorio")
-        @Email(message = "Ingresa un correo valido")
+        @Email(message = "Ingresa un correo válido")
         @Size(max = 100, message = "El correo no puede exceder 100 caracteres")
         String correo,
         @NotBlank(message = "La contraseña es obligatoria")

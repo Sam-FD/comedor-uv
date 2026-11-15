@@ -8,19 +8,19 @@
     </div>
 
     <div v-if="!recepcionAbierta" class="rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">
-      El comedor cerro temporalmente la recepcion de pedidos en linea.
+      El comedor cerró temporalmente la recepción de pedidos en línea.
     </div>
 
     <div v-else-if="sinPedidosEnLinea" class="rounded-lg border border-red-200 bg-red-50 p-3 text-xs text-red-800">
-      Tienes suspendidos los pedidos en linea. Solo puedes consultar el catalogo vigente.
+      Tienes suspendidos los pedidos en línea. Solo puedes consultar el catálogo vigente.
     </div>
 
     <div v-else-if="pedidoActivo" class="rounded-lg border border-uv-azul/30 bg-uv-azul-claro p-3 text-xs text-uv-azul">
-      Ya tienes el pedido {{ pedidoActivo.referencia }} en curso. Recogelo o cancelalo si aun esta en recibido antes de hacer uno nuevo.
+      Ya tienes el pedido {{ pedidoActivo.referencia }} en curso. Recógelo o cancélalo si aún está en recibido antes de hacer uno nuevo.
     </div>
 
     <div v-if="carrito.length === 0" class="py-6 text-center text-sm text-slate-500">
-      Agrega la comida del dia o platillos del menu para iniciar tu orden.
+      Agrega la comida del día o platillos del menú para iniciar tu orden.
     </div>
 
     <ul v-else class="divide-y divide-slate-100 text-sm">
@@ -75,7 +75,7 @@
             class="mt-0.5 accent-uv-azul"
           />
           <div>
-            <p class="font-medium text-slate-900">Tarjeta desde la aplicacion</p>
+            <p class="font-medium text-slate-900">Tarjeta desde la aplicación</p>
             <p class="text-xs text-slate-500">Se retiene el monto y se cobra hasta que recojas tu pedido.</p>
           </div>
         </label>
@@ -98,10 +98,10 @@
           <div>
             <p class="font-medium text-slate-900">Pago en mostrador</p>
             <p v-if="soloAppTarjeta" class="text-xs text-amber-800">
-              Deshabilitado temporalmente por acumulacion de faltas.
+              Deshabilitado temporalmente por acumulación de faltas.
             </p>
             <p v-else class="text-xs text-slate-500">
-              Efectivo o tarjeta fisica en caja presentando tu codigo de pedido.
+              Efectivo o tarjeta física en caja presentando tu código de pedido.
             </p>
           </div>
         </label>
@@ -115,7 +115,7 @@
               class="px-1.5 py-0.5 rounded text-[10px] font-semibold"
               :class="modoDemo ? (esStripeReal ? 'bg-uv-verde-claro text-uv-verde-oscuro' : 'bg-uv-azul-claro text-uv-azul') : 'bg-slate-200 text-slate-700'"
             >
-              {{ modoDemo ? (esStripeReal ? 'Stripe Test' : 'Sandbox local') : 'Retencion bancaria' }}
+              {{ modoDemo ? (esStripeReal ? 'Stripe Test' : 'Sandbox local') : 'Retención bancaria' }}
             </span>
           </div>
           <div v-if="modoDemo" class="flex items-center gap-2">
@@ -148,7 +148,7 @@
         </div>
 
         <div>
-          <label class="block text-slate-600 mb-1">Numero de tarjeta (16 digitos)</label>
+          <label class="block text-slate-600 mb-1">Número de tarjeta (16 dígitos)</label>
           <input
             :value="tarjeta.numero"
             @input="formatearNumeroTarjeta"
@@ -188,7 +188,7 @@
         </div>
 
         <p class="text-[11px] text-slate-500 leading-snug">
-          Solo se retiene {{ formatearMoneda(totalCarrito) }} hasta la entrega. No almacenamos tus datos bancarios.
+          Solo se retiene {{ formatearMoneda(totalCarrito) }} hasta la entrega. No se almacenan datos bancarios.
         </p>
       </div>
 
@@ -274,7 +274,7 @@ function intentarEnviar() {
       return
     }
     if (!/^\d{16}$/.test(digitos)) {
-      errorLocal.value = 'El numero de tarjeta debe tener 16 digitos'
+      errorLocal.value = 'El número de tarjeta debe tener 16 dígitos'
       return
     }
     if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(tarjeta.vigencia.trim())) {
@@ -292,7 +292,7 @@ function intentarEnviar() {
       return
     }
     if (!/^\d{3,4}$/.test(tarjeta.cvv.trim())) {
-      errorLocal.value = 'Ingresa un CVV valido de 3 o 4 digitos'
+      errorLocal.value = 'Ingresa un CVV válido de 3 o 4 dígitos'
       return
     }
   }

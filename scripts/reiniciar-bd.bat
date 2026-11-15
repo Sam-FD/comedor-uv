@@ -3,8 +3,8 @@ chcp 65001 > nul
 setlocal
 cd /d "%~dp0\.."
 
-echo Esto borrara todos los pedidos y cambios en la base de datos local y restaurara los datos de prueba iniciales.
-set /p RESP="Escribe SI para continuar: "
+echo Esta accion borrara todos los pedidos y cambios de la base de datos local para iniciar con una base limpia.
+set /p RESP="Confirmar escribiendo SI: "
 if /i not "%RESP%"=="SI" (
     echo Operacion cancelada.
     pause
@@ -15,5 +15,5 @@ call detener.bat
 docker compose down -v
 docker compose up -d
 
-echo Base de datos reiniciada. Ahora puedes ejecutar iniciar.bat.
+echo Base de datos reiniciada. Ejecutar iniciar.bat para levantar el sistema.
 pause

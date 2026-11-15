@@ -26,7 +26,7 @@ docker info > nul 2>&1
 if not errorlevel 1 goto docker_listo
 set /a intentos+=1
 if !intentos! GEQ 45 (
-    echo ERROR: Docker Desktop tardo demasiado en iniciar. Abrelo manualmente y vuelve a intentar.
+    echo ERROR: Docker Desktop tardo demasiado en iniciar. Iniciar Docker Desktop manualmente y reintentar.
     pause
     exit /b 1
 )
@@ -101,7 +101,7 @@ echo.
 echo [4/4] Esperando a que el sistema termine de cargar...
 powershell -NoProfile -Command "for ($i = 0; $i -lt 30; $i++) { try { $b = Invoke-WebRequest -Uri 'http://localhost:8080/api/platillos' -UseBasicParsing -TimeoutSec 2; $f = Invoke-WebRequest -Uri 'http://localhost:5173' -UseBasicParsing -TimeoutSec 2; if ($b.StatusCode -eq 200 -and $f.StatusCode -eq 200) { exit 0 } } catch {}; Start-Sleep -Seconds 2 }; exit 1"
 if errorlevel 1 (
-    echo Aviso: Los servicios siguen arrancando en segundo plano. Revisa las ventanas minimizadas si tarda un poco mas.
+    echo Aviso: Los servicios siguen arrancando en segundo plano.
 ) else (
     echo Sistema en linea. Abriendo navegador...
     start "" http://localhost:5173
@@ -121,7 +121,7 @@ echo   - Socket.IO:      http://localhost:9092
 echo   - PostgreSQL:     localhost:5432 (comedor_uv)
 echo   - App Movil USB:  http://127.0.0.1:8080 (via adb reverse)
 echo.
-echo   Cuando termines de usar el sistema, ejecuta detener.bat
+echo   Para detener los servicios, ejecutar detener.bat
 echo ==================================================
 echo.
 pause

@@ -1,6 +1,5 @@
 <template>
   <div class="max-w-6xl mx-auto px-4 py-6 space-y-6">
-    <!-- Barra superior: pestanas y control de recepcion -->
     <div class="flex flex-wrap items-center justify-between gap-3">
       <div class="bg-white border border-slate-200 rounded-xl p-1 grid grid-cols-3 sm:inline-flex gap-1 text-xs sm:text-sm shadow-sm w-full sm:w-auto">
         <button
@@ -18,8 +17,8 @@
           class="px-2.5 sm:px-4 py-2 rounded-lg font-medium transition-colors text-center"
           :class="pestana === 'menu' ? 'bg-uv-azul text-white' : 'text-slate-600 hover:bg-slate-100'"
         >
-          <span class="sm:hidden">Menu</span>
-          <span class="hidden sm:inline">Menu y disponibilidad</span>
+          <span class="sm:hidden">Menú</span>
+          <span class="hidden sm:inline">Menú y disponibilidad</span>
         </button>
         <button
           type="button"
@@ -27,8 +26,8 @@
           class="px-2.5 sm:px-4 py-2 rounded-lg font-medium transition-colors text-center"
           :class="pestana === 'historico' ? 'bg-uv-azul text-white' : 'text-slate-600 hover:bg-slate-100'"
         >
-          <span class="sm:hidden">Historico</span>
-          <span class="hidden sm:inline">Historico de pedidos</span>
+          <span class="sm:hidden">Histórico</span>
+          <span class="hidden sm:inline">Histórico de pedidos</span>
         </button>
       </div>
 
@@ -42,7 +41,7 @@
             : 'bg-amber-50 border-amber-300 text-amber-900 hover:bg-uv-verde-claro hover:border-uv-verde/40 hover:text-uv-verde-oscuro'
         "
       >
-        Recepcion en linea: {{ catalogo.recepcionAbierta ? 'Abierta' : 'Cerrada' }}
+        Recepción en línea: {{ catalogo.recepcionAbierta ? 'Abierta' : 'Cerrada' }}
       </button>
     </div>
 
@@ -56,13 +55,12 @@
       <button type="button" @click="errorOperacion = ''" class="text-xs font-semibold underline">Cerrar</button>
     </div>
 
-    <!-- PESTANA 1: COLA DE PEDIDOS EN TIEMPO REAL -->
     <div v-if="pestana === 'cola'" class="space-y-6">
       <section class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm space-y-3">
         <div class="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 class="text-sm font-bold text-slate-900">Validacion rapida en mostrador</h2>
-            <p class="text-xs text-slate-500">Ingresa el codigo de referencia del estudiante para validar su cobro y entrega</p>
+            <h2 class="text-sm font-bold text-slate-900">Validación rápida en mostrador</h2>
+            <p class="text-xs text-slate-500">Ingresa el código de referencia del estudiante para validar su cobro y entrega</p>
           </div>
           <form @submit.prevent="buscarReferencia" class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
             <input
@@ -124,7 +122,6 @@
         </div>
       </section>
 
-      <!-- Tablero de 3 columnas -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div
           v-for="columna in columnasCola"
@@ -210,17 +207,16 @@
       </div>
     </div>
 
-    <!-- PESTANA 2: MENU Y DISPONIBILIDAD -->
     <div v-if="pestana === 'menu'" class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
       <div class="lg:col-span-2 space-y-6">
         <section class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
           <div class="px-5 py-4 border-b border-slate-200">
-            <h2 class="text-base font-bold text-slate-900">Comida del dia ({{ catalogo.fechaOperativa }})</h2>
+            <h2 class="text-base font-bold text-slate-900">Comida del día ({{ catalogo.fechaOperativa }})</h2>
             <p class="text-xs text-slate-500">Apaga la disponibilidad en cuanto se termine para bloquear nuevos pedidos.</p>
           </div>
 
           <div v-if="catalogo.comidasDelDia.length === 0" class="p-5 text-sm text-slate-500">
-            Aun no hay comidas del dia publicadas hoy.
+            Aún no hay comidas del día publicadas hoy.
           </div>
 
           <ul v-else class="divide-y divide-slate-100">
@@ -258,8 +254,8 @@
 
         <section class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
           <div class="px-5 py-4 border-b border-slate-200">
-            <h2 class="text-base font-bold text-slate-900">Menu regular</h2>
-            <p class="text-xs text-slate-500">Los platillos no se eliminan para conservar el historico de ventas.</p>
+            <h2 class="text-base font-bold text-slate-900">Menú regular</h2>
+            <p class="text-xs text-slate-500">Los platillos no se eliminan para conservar el histórico de ventas.</p>
           </div>
 
           <ul class="divide-y divide-slate-100">
@@ -305,10 +301,9 @@
         </section>
       </div>
 
-      <!-- Formularios de alta -->
       <div class="space-y-6">
         <section class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-          <h3 class="text-sm font-bold text-slate-900 mb-3">Publicar comida del dia</h3>
+          <h3 class="text-sm font-bold text-slate-900 mb-3">Publicar comida del día</h3>
           <form @submit.prevent="publicarComidaDelDia" class="space-y-3 text-sm">
             <div>
               <label class="block text-xs font-medium text-slate-700 mb-1">Turno</label>
@@ -360,7 +355,7 @@
         </section>
 
         <section class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-          <h3 class="text-sm font-bold text-slate-900 mb-3">Agregar al menu regular</h3>
+          <h3 class="text-sm font-bold text-slate-900 mb-3">Agregar al menú regular</h3>
           <form @submit.prevent="agregarPlatilloRegular" class="space-y-3 text-sm">
             <div>
               <label class="block text-xs font-medium text-slate-700 mb-1">Nombre</label>
@@ -373,11 +368,11 @@
               />
             </div>
             <div>
-              <label class="block text-xs font-medium text-slate-700 mb-1">Descripcion</label>
+              <label class="block text-xs font-medium text-slate-700 mb-1">Descripción</label>
               <textarea
                 v-model="formRegular.descripcion"
                 rows="2"
-                placeholder="Ingredientes o porcion"
+                placeholder="Ingredientes o porción"
                 class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:border-uv-azul"
               ></textarea>
             </div>
@@ -416,7 +411,6 @@
       </div>
     </div>
 
-    <!-- PESTANA 3: HISTORICO DE PEDIDOS -->
     <div v-if="pestana === 'historico'" class="space-y-5">
       <section class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-wrap items-end gap-3 text-sm">
         <div>
@@ -507,7 +501,6 @@
         </div>
 
         <template v-else>
-          <!-- Vista de tarjetas en movil -->
           <div class="md:hidden divide-y divide-slate-100">
             <article v-for="p in historico.pedidos" :key="`hm-${p.id}`" class="p-4 space-y-2">
               <div class="flex items-start justify-between gap-2">
@@ -540,7 +533,6 @@
             </article>
           </div>
 
-          <!-- Tabla en escritorio -->
           <div class="hidden md:block overflow-x-auto">
             <table class="w-full text-sm text-left">
               <thead class="bg-slate-50 text-xs uppercase text-slate-500 border-b border-slate-200">
@@ -589,7 +581,6 @@
       </section>
     </div>
 
-    <!-- MODAL: CONFIRMACION DE COBRO Y ENTREGA -->
     <div
       v-if="pedidoAEntregar"
       class="fixed inset-0 bg-slate-900/40 z-50 flex items-center justify-center p-4"
@@ -620,10 +611,10 @@
           :class="pedidoAEntregar.modalidadPago === 'mostrador' ? 'bg-amber-50 border-amber-300 text-amber-900' : 'bg-uv-verde-claro border-uv-verde/40 text-uv-verde-oscuro'"
         >
           <p v-if="pedidoAEntregar.modalidadPago === 'mostrador'" class="font-semibold">
-            Cobrar {{ formatearMoneda(pedidoAEntregar.total) }} en caja antes de entregar (efectivo o tarjeta fisica).
+            Cobrar {{ formatearMoneda(pedidoAEntregar.total) }} en caja antes de entregar (efectivo o tarjeta física).
           </p>
           <p v-else class="font-semibold">
-            Pago retenido en app por {{ formatearMoneda(pedidoAEntregar.total) }}. Al confirmar se ejecutara el cobro definitivo.
+            Pago retenido en app por {{ formatearMoneda(pedidoAEntregar.total) }}. Al confirmar se ejecutará el cobro definitivo.
           </p>
         </div>
 
@@ -647,7 +638,6 @@
       </div>
     </div>
 
-    <!-- MODAL: MARCAR NO RECLAMADO -->
     <div
       v-if="pedidoAVencer"
       class="fixed inset-0 bg-slate-900/40 z-50 flex items-center justify-center p-4"
@@ -658,7 +648,7 @@
           Marcar pedido {{ pedidoAVencer.referencia }} como no reclamado
         </h3>
         <p class="text-sm text-slate-600 leading-relaxed">
-          Esta accion cerrara el pedido de {{ pedidoAVencer.nombreEstudiante }}, liberara o cancelara el pago correspondiente y sumara 1 falta de abandono a su cuenta.
+          Esta acción cerrará el pedido de {{ pedidoAVencer.nombreEstudiante }}, liberará o cancelará el pago correspondiente y sumará 1 falta de abandono a su cuenta.
         </p>
         <div class="flex justify-end gap-2">
           <button
@@ -680,14 +670,13 @@
       </div>
     </div>
 
-    <!-- MODAL: EDITAR PLATILLO REGULAR -->
     <div
       v-if="platilloEnEdicion"
       class="fixed inset-0 bg-slate-900/40 z-50 flex items-center justify-center p-4"
       @click.self="platilloEnEdicion = null"
     >
       <div class="bg-white border border-slate-200 rounded-xl shadow-lg max-w-md w-full p-5 space-y-4 max-h-[90vh] overflow-y-auto">
-        <h3 class="text-base font-bold text-slate-900">Editar platillo del menu regular</h3>
+        <h3 class="text-base font-bold text-slate-900">Editar platillo del menú regular</h3>
         <form @submit.prevent="guardarEdicionPlatillo" class="space-y-3 text-sm">
           <div>
             <label class="block text-xs font-medium text-slate-700 mb-1">Nombre</label>
@@ -699,7 +688,7 @@
             />
           </div>
           <div>
-            <label class="block text-xs font-medium text-slate-700 mb-1">Descripcion</label>
+            <label class="block text-xs font-medium text-slate-700 mb-1">Descripción</label>
             <textarea
               v-model="platilloEnEdicion.descripcion"
               rows="2"
@@ -827,7 +816,7 @@ const columnasCola = computed(() => [
   },
   {
     estado: 'en_preparacion',
-    titulo: 'En preparacion',
+    titulo: 'En preparación',
     bordeSuperior: 'border-t-uv-azul',
     items: cola.value.filter((p) => p.estadoPedido === 'en_preparacion')
   },
@@ -847,7 +836,7 @@ function siguienteEstado(actual) {
 }
 
 function textoAccionEstado(actual) {
-  if (actual === 'recibido') return 'Iniciar preparacion'
+  if (actual === 'recibido') return 'Iniciar preparación'
   if (actual === 'en_preparacion') return 'Marcar listo para recoger'
   if (actual === 'listo_para_recoger') return 'Validar y entregar'
   return ''
@@ -869,8 +858,8 @@ async function alternarRecepcion() {
     })
     catalogo.value.recepcionAbierta = data.recepcionAbierta
     mensajeOperacion.value = data.recepcionAbierta
-      ? 'Recepcion de pedidos en linea abierta.'
-      : 'Recepcion de pedidos en linea cerrada temporalmente.'
+      ? 'Recepción de pedidos en línea abierta.'
+      : 'Recepción de pedidos en línea cerrada temporalmente.'
   } catch (err) {
     errorOperacion.value = extraerMensajeError(err, 'No se pudo cambiar el estado de recepcion')
   }
@@ -916,7 +905,7 @@ async function buscarReferencia() {
     pedidoEncontrado.value = data
   } catch (err) {
     pedidoEncontrado.value = null
-    errorOperacion.value = extraerMensajeError(err, 'No se encontro la referencia')
+    errorOperacion.value = extraerMensajeError(err, 'No se encontró la referencia')
   }
 }
 
@@ -972,7 +961,7 @@ async function confirmarVencimiento() {
       pedidoEncontrado.value = data
     }
     await cargarCola()
-    mensajeOperacion.value = `Pedido ${data.referencia} marcado como no reclamado. Se registro una falta al estudiante.`
+    mensajeOperacion.value = `Pedido ${data.referencia} marcado como no reclamado. Se registró una falta al estudiante.`
   } catch (err) {
     errorOperacion.value = extraerMensajeError(err, 'No se pudo marcar como no reclamado')
     await cargarCola()
@@ -1015,7 +1004,7 @@ async function guardarEdicionPlatillo() {
     })
     platilloEnEdicion.value = null
     await cargarCatalogo()
-    mensajeOperacion.value = 'Platillo actualizado en el menu regular.'
+    mensajeOperacion.value = 'Platillo actualizado en el menú regular.'
   } catch (err) {
     errorOperacion.value = extraerMensajeError(err, 'No se pudo actualizar el platillo')
   }
@@ -1033,7 +1022,7 @@ async function publicarComidaDelDia() {
     formComidaDia.nombre = ''
     formComidaDia.descripcion = ''
     await cargarCatalogo()
-    mensajeOperacion.value = 'Comida del dia publicada para el turno ' + formComidaDia.turno + '.'
+    mensajeOperacion.value = 'Comida del día publicada para el turno ' + formComidaDia.turno + '.'
   } catch (err) {
     errorOperacion.value = extraerMensajeError(err, 'No se pudo publicar la comida del dia')
   }
@@ -1052,7 +1041,7 @@ async function agregarPlatilloRegular() {
     formRegular.descripcion = ''
     formRegular.precio = ''
     await cargarCatalogo()
-    mensajeOperacion.value = 'Platillo agregado al menu regular.'
+    mensajeOperacion.value = 'Platillo agregado al menú regular.'
   } catch (err) {
     errorOperacion.value = extraerMensajeError(err, 'No se pudo agregar el platillo')
   }

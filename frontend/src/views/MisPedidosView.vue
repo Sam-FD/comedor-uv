@@ -23,19 +23,18 @@
       <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between">
         <div>
           <h2 class="text-base font-bold text-slate-900">Historial de mis pedidos</h2>
-          <p class="text-xs text-slate-500">Registro de ordenes realizadas con tu cuenta institucional</p>
+          <p class="text-xs text-slate-500">Registro de órdenes realizadas con tu cuenta institucional</p>
         </div>
         <RouterLink to="/" class="text-sm font-medium text-uv-azul hover:underline">
-          Volver al menu
+          Volver al menú
         </RouterLink>
       </div>
 
       <div v-if="pedidosCerrados.length === 0" class="p-6 text-sm text-slate-500 text-center">
-        Aun no tienes pedidos concluidos en tu historial.
+        Aún no tienes pedidos concluidos en tu historial.
       </div>
 
       <template v-else>
-        <!-- Vista de tarjetas en movil -->
         <div class="md:hidden divide-y divide-slate-100">
           <article v-for="pedido in pedidosCerrados" :key="`m-${pedido.id}`" class="p-4 space-y-2.5">
             <div class="flex items-start justify-between gap-2">
@@ -66,7 +65,6 @@
           </article>
         </div>
 
-        <!-- Tabla en escritorio -->
         <div class="hidden md:block overflow-x-auto">
           <table class="w-full text-sm text-left">
             <thead class="bg-slate-50 text-xs uppercase text-slate-500 border-b border-slate-200">
@@ -153,7 +151,7 @@ async function alActualizarPorVencimiento() {
   const estabaActivo = Boolean(pedidoActivo.value)
   await Promise.all([cargarPedidos(), refrescarPerfil()])
   if (estabaActivo && !pedidoActivo.value) {
-    avisoEstado.value = 'El tiempo de recoleccion vencio y tu pedido paso al historial.'
+    avisoEstado.value = 'El tiempo de recolección venció y tu pedido pasó al historial.'
   }
 }
 
@@ -176,7 +174,7 @@ onMounted(async () => {
       } else if (pedido?.estadoPedido === 'entregado') {
         avisoEstado.value = `Tu pedido ${pedido.referencia} fue entregado.`
       } else if (pedido?.estadoPedido === 'no_reclamado') {
-        avisoEstado.value = `Tu pedido ${pedido.referencia} vencio y fue marcado como no reclamado.`
+        avisoEstado.value = `Tu pedido ${pedido.referencia} venció y fue marcado como no reclamado.`
       }
     }),
     suscribirEvento('usuario_actualizado', (usuario) => {

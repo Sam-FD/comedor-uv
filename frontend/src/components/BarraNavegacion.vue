@@ -14,13 +14,13 @@
       <div class="order-2 md:order-3 flex items-center gap-2 sm:gap-2.5 shrink-0">
         <div
           class="flex items-center gap-1.5 text-xs bg-black/15 px-2.5 py-1 rounded-full text-blue-50"
-          :title="socketConectado ? 'Tiempo real activo' : (socketDisponible ? 'Reconectando tiempo real con respaldo periodico' : 'Actualizacion automatica periodica activa')"
+          :title="socketConectado ? 'Tiempo real activo' : (socketDisponible ? 'Reconectando tiempo real con respaldo periódico' : 'Actualización automática periódica activa')"
         >
           <span
             class="w-2 h-2 rounded-full"
             :class="socketConectado ? 'bg-uv-verde' : (socketDisponible ? 'bg-slate-300' : 'bg-sky-300')"
           ></span>
-          <span class="hidden sm:inline">{{ socketConectado ? 'En vivo' : (socketDisponible ? 'Reconectando' : 'En linea') }}</span>
+          <span class="hidden sm:inline">{{ socketConectado ? 'En vivo' : (socketDisponible ? 'Reconectando' : 'En línea') }}</span>
         </div>
 
         <div class="flex items-center gap-2.5 pl-2.5 border-l border-white/20">
@@ -55,7 +55,7 @@
               class="px-3 py-1.5 rounded-md transition-colors whitespace-nowrap"
               :class="route.name === 'catalogo' ? 'bg-white/15 font-medium text-white' : 'text-blue-100 hover:bg-white/10 hover:text-white'"
             >
-              Menu
+              Menú
             </RouterLink>
             <RouterLink
               to="/mis-pedidos"

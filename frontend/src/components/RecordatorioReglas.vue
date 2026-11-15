@@ -12,16 +12,16 @@
         Solo puedes tener <span class="font-medium text-slate-800">un pedido activo</span> a la vez. Si te equivocaste, puedes cancelarlo mientras siga en estado Recibido.
       </li>
       <li>
-        Al pasar a <span class="font-medium text-slate-800">Listo para recoger</span>, cuentas con <span class="font-medium text-slate-800">15 minutos</span> para pasar al mostrador con tu codigo.
+        Al pasar a <span class="font-medium text-slate-800">Listo para recoger</span>, cuentas con <span class="font-medium text-slate-800">15 minutos</span> para pasar al mostrador con tu código.
       </li>
       <li>
         Si no lo recoges a tiempo se suma una falta. Con <span class="font-medium text-slate-800">3 faltas</span> se desactiva el pago en mostrador por 1 mes (solo tarjeta en app).
       </li>
       <li>
-        Si acumulas una <span class="font-medium text-slate-800">4ta falta</span> durante la restriccion, los pedidos en linea se suspenden 15 dias adicionales.
+        Si acumulas una <span class="font-medium text-slate-800">4ta falta</span> durante la restricción, los pedidos en línea se suspenden 15 días adicionales.
       </li>
       <li>
-        Con 1 o 2 faltas, si pasan <span class="font-medium text-slate-800">60 dias</span> sin reincidir tu contador regresa a 0.
+        Con 1 o 2 faltas, si pasan <span class="font-medium text-slate-800">60 días</span> sin reincidir tu contador regresa a 0.
       </li>
     </ul>
   </section>

@@ -77,8 +77,8 @@ public class RestriccionService {
         if (ConstantesComedor.RESTRICCION_SIN_PEDIDOS.equals(usuario.getNivelRestriccion())) {
             String fechaTexto = formatearFecha(usuario.getRestriccionHasta());
             throw new ReglaNegocioException(
-                    "Tu cuenta tiene suspendidos los pedidos en linea por acumular 4 faltas de recoleccion. "
-                            + "Solo puedes consultar el menu hasta el " + fechaTexto + ".",
+                    "Tu cuenta tiene suspendidos los pedidos en línea por acumular 4 faltas de recolección. "
+                            + "Solo puedes consultar el menú hasta el " + fechaTexto + ".",
                     HttpStatus.FORBIDDEN
             );
         }
@@ -87,14 +87,14 @@ public class RestriccionService {
                 && ConstantesComedor.PAGO_MOSTRADOR.equals(modalidadPago)) {
             String fechaTexto = formatearFecha(usuario.getRestriccionHasta());
             throw new ReglaNegocioException(
-                    "Por acumular 3 faltas de recoleccion, no puedes usar pago en mostrador hasta el "
-                            + fechaTexto + ". Solo puedes ordenar pagando con tarjeta desde la aplicacion.",
+                    "Por acumular 3 faltas de recolección, no puedes usar pago en mostrador hasta el "
+                            + fechaTexto + ". Solo puedes ordenar pagando con tarjeta desde la aplicación.",
                     HttpStatus.FORBIDDEN
             );
         }
     }
 
     private String formatearFecha(LocalDateTime fecha) {
-        return fecha != null ? fecha.format(FORMATO_FECHA) : "proximo corte";
+        return fecha != null ? fecha.format(FORMATO_FECHA) : "próximo corte";
     }
 }

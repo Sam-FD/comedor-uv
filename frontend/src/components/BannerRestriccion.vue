@@ -42,23 +42,23 @@ const claseContenedor = computed(() => {
 const titulo = computed(() => {
   const nivel = props.usuario?.nivelRestriccion
   if (nivel === 'sin_pedidos_en_linea') {
-    return 'Pedidos en linea suspendidos'
+    return 'Pedidos en línea suspendidos'
   }
   if (nivel === 'sin_mostrador') {
-    return 'Restriccion activa: solo pago con tarjeta en aplicacion'
+    return 'Restricción activa: solo pago con tarjeta en aplicación'
   }
-  return `Aviso de recoleccion (${props.usuario?.faltasAbandono || 0} falta${props.usuario?.faltasAbandono === 1 ? '' : 's'} acumulada${props.usuario?.faltasAbandono === 1 ? '' : 's'})`
+  return `Aviso de recolección (${props.usuario?.faltasAbandono || 0} falta${props.usuario?.faltasAbandono === 1 ? '' : 's'} acumulada${props.usuario?.faltasAbandono === 1 ? '' : 's'})`
 })
 
 const mensaje = computed(() => {
   const nivel = props.usuario?.nivelRestriccion
   const fecha = formatearFechaHora(props.usuario?.restriccionHasta)
   if (nivel === 'sin_pedidos_en_linea') {
-    return `Acumulaste 4 faltas por pedidos no reclamados. Puedes consultar el menu en tiempo real, pero deberas comprar directamente en mostrador hasta el ${fecha}.`
+    return `Acumulaste 4 faltas por pedidos no reclamados. Puedes consultar el menú en tiempo real, pero deberás comprar directamente en mostrador hasta el ${fecha}.`
   }
   if (nivel === 'sin_mostrador') {
-    return `Acumulaste 3 faltas por pedidos no reclamados. El pago en mostrador estara deshabilitado hasta el ${fecha}. Solo puedes ordenar con tarjeta en linea; si acumulas una 4ta falta se suspenderan los pedidos por 15 dias adicionales.`
+    return `Acumulaste 3 faltas por pedidos no reclamados. El pago en mostrador estará deshabilitado hasta el ${fecha}. Solo puedes ordenar con tarjeta en línea; si acumulas una 4ta falta se suspenderán los pedidos por 15 días adicionales.`
   }
-  return 'Recuerda recoger tus pedidos a tiempo. Al acumular 3 faltas se deshabilita el pago en mostrador durante un mes. Si pasan 60 dias sin reincidir, tu contador vuelve a cero.'
+  return 'Recuerda recoger tus pedidos a tiempo. Al acumular 3 faltas se deshabilita el pago en mostrador durante un mes. Si pasan 60 días sin reincidir, tu contador vuelve a cero.'
 })
 </script>

@@ -8,7 +8,7 @@
   >
     <div v-if="destacado" class="bg-uv-verde-claro border-b border-uv-verde/20 px-4 py-2 flex items-center justify-between gap-2">
       <span class="text-xs font-semibold text-uv-verde-oscuro uppercase tracking-wide">
-        Comida del dia · Turno {{ platillo.turno }}
+        Comida del día · Turno {{ platillo.turno }}
       </span>
       <span
         class="px-2 py-0.5 rounded-full text-[11px] font-semibold"
@@ -106,7 +106,7 @@ defineEmits(['agregar'])
 const textoBoton = computed(() => {
   if (!props.platillo.disponible) return 'Agotado'
   if (props.cantidadEnCarrito > 0) return 'Agregar otro (+1)'
-  return props.destacado ? '+ Agregar comida del dia' : '+ Agregar'
+  return props.destacado ? '+ Agregar comida del día' : '+ Agregar'
 })
 
 const claseBoton = computed(() => {

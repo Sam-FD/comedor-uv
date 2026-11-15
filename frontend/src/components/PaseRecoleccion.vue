@@ -6,7 +6,7 @@
     <div class="p-4 sm:p-5 border-b border-dashed border-slate-200 flex flex-wrap items-center justify-between gap-4 bg-slate-50/50">
       <div class="flex items-center gap-4">
         <div class="bg-uv-azul-claro border border-uv-azul/20 rounded-lg px-4 py-2 text-center">
-          <p class="text-[10px] font-semibold uppercase tracking-wider text-uv-azul/80">Codigo</p>
+          <p class="text-[10px] font-semibold uppercase tracking-wider text-uv-azul/80">Código</p>
           <p class="text-3xl font-bold tracking-widest text-uv-azul tabular-nums leading-tight">
             {{ pedido.referencia }}
           </p>
@@ -15,7 +15,7 @@
         <div>
           <div class="flex flex-wrap items-center gap-2">
             <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">
-              Pase de recoleccion
+              Pase de recolección
             </span>
             <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold" :class="claseEstado">
               {{ etiquetaEstadoPedido(pedido.estadoPedido) }}
@@ -42,7 +42,6 @@
     </div>
 
     <div class="p-4 sm:p-5 space-y-4">
-      <!-- Indicador de progreso en 3 pasos -->
       <div class="grid grid-cols-3 gap-2 text-xs">
         <div
           v-for="(paso, idx) in pasos"
@@ -65,16 +64,16 @@
         class="rounded-lg bg-uv-verde-claro border border-uv-verde/40 px-4 py-3 flex flex-wrap items-center justify-between gap-3"
       >
         <div class="text-sm text-uv-verde-oscuro">
-          <p class="font-semibold">Tu orden ya esta lista para recoger en mostrador.</p>
+          <p class="font-semibold">Tu orden ya está lista para recoger en mostrador.</p>
           <p v-if="pedido.modalidadPago === 'mostrador'" class="mt-0.5">
             Presenta la referencia {{ pedido.referencia }} en caja para pagar {{ formatearMoneda(pedido.total) }} y recibir tus alimentos.
           </p>
           <p v-else class="mt-0.5">
-            Pasa directo al area de entrega con la referencia {{ pedido.referencia }} para confirmar tu cobro y recibir tus alimentos.
+            Pasa directo al área de entrega con la referencia {{ pedido.referencia }} para confirmar tu cobro y recibir tus alimentos.
           </p>
         </div>
         <div class="bg-white border border-uv-verde/30 rounded-md px-3 py-1.5 text-sm font-bold text-uv-verde-oscuro tabular-nums shrink-0">
-          Tiempo limite: {{ textoCuentaRegresiva }}
+          Tiempo límite: {{ textoCuentaRegresiva }}
         </div>
       </div>
 
@@ -117,7 +116,7 @@
                 @click="confirmarCancelacion"
                 class="px-2.5 py-1 rounded bg-red-600 hover:bg-red-700 text-white font-medium disabled:opacity-60"
               >
-                {{ cancelando ? 'Cancelando...' : 'Si, cancelar' }}
+                {{ cancelando ? 'Cancelando...' : 'Sí, cancelar' }}
               </button>
               <button
                 type="button"
@@ -130,7 +129,7 @@
           </template>
 
           <span v-else-if="pedido.estadoPedido === 'en_preparacion'" class="text-xs text-slate-500">
-            En preparacion (ya no es posible cancelar)
+            En preparación (ya no es posible cancelar)
           </span>
         </div>
       </div>
@@ -250,7 +249,7 @@ async function confirmarCancelacion() {
 
 const pasos = [
   { clave: 'recibido', texto: 'Recibido' },
-  { clave: 'en_preparacion', texto: 'En preparacion' },
+  { clave: 'en_preparacion', texto: 'En preparación' },
   { clave: 'listo_para_recoger', texto: 'Listo' }
 ]
 

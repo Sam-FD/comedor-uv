@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 
 public record ComidaDelDiaRequest(
-        @NotBlank(message = "El nombre de la comida del dia es obligatorio")
+        @NotBlank(message = "El nombre de la comida del día es obligatorio")
         @Size(max = 100, message = "El nombre no puede exceder 100 caracteres")
         String nombre,
         String descripcion,

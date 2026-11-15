@@ -1,13 +1,19 @@
 @echo off
 chcp 65001 > nul
-setlocal
+setlocal EnableDelayedExpansion
 cd /d "%~dp0\.."
 
 set "MVN_CMD=mvn"
 where mvn > nul 2>&1
 if errorlevel 1 (
-    if exist "C:\Program Files\JetBrains\IntelliJ IDEA 2025.2.5\plugins\maven\lib\maven3\bin\mvn.cmd" (
-        set "MVN_CMD=C:\Program Files\JetBrains\IntelliJ IDEA 2025.2.5\plugins\maven\lib\maven3\bin\mvn.cmd"
+    set "MVN_FOUND="
+    for /d %%D in ("C:\Program Files\JetBrains\IntelliJ IDEA*") do (
+        if exist "%%~D\plugins\maven\lib\maven3\bin\mvn.cmd" (
+            set "MVN_FOUND=%%~D\plugins\maven\lib\maven3\bin\mvn.cmd"
+        )
+    )
+    if defined MVN_FOUND (
+        set "MVN_CMD=!MVN_FOUND!"
     ) else (
         echo ERROR: No se encontro Maven en el sistema.
         exit /b 1

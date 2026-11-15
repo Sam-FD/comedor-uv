@@ -6,8 +6,8 @@
       v-if="!catalogo.recepcionAbierta"
       class="rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900 shadow-sm"
     >
-      <p class="font-semibold">Recepcion de pedidos cerrada temporalmente</p>
-      <p class="mt-0.5">El personal pauso los pedidos en linea. Puedes seguir consultando la disponibilidad del menu.</p>
+      <p class="font-semibold">Recepción de pedidos cerrada temporalmente</p>
+      <p class="mt-0.5">El personal pausó los pedidos en línea. Puedes seguir consultando la disponibilidad del menú.</p>
     </div>
 
     <div
@@ -26,11 +26,10 @@
     />
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-      <!-- Columna izquierda: selector de turno, comida del dia y menu regular -->
       <div class="lg:col-span-2 space-y-6">
         <div class="flex flex-wrap items-center justify-between gap-3 bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
           <div>
-            <h2 class="text-lg font-bold text-slate-900">Menu disponible hoy</h2>
+            <h2 class="text-lg font-bold text-slate-900">Menú disponible hoy</h2>
             <p class="text-xs text-slate-500">
               Jornada {{ catalogo.fechaOperativa || 'vigente' }} · Disponibilidad actualizada en vivo
             </p>
@@ -56,13 +55,12 @@
           </div>
         </div>
 
-        <!-- Comida del dia -->
         <section class="space-y-3">
           <div class="flex items-center justify-between">
             <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500">
-              Comida del dia ({{ turnoSeleccionado }})
+              Comida del día ({{ turnoSeleccionado }})
             </h3>
-            <span class="text-xs text-uv-verde-oscuro font-medium">Menu completo del dia</span>
+            <span class="text-xs text-uv-verde-oscuro font-medium">Menú completo del día</span>
           </div>
 
           <div v-if="comidasDelTurno.length > 0" class="grid grid-cols-1 gap-3">
@@ -77,14 +75,13 @@
             />
           </div>
           <div v-else class="bg-white border border-slate-200 rounded-xl p-5 text-sm text-slate-500 shadow-sm">
-            El personal aun no publica la comida del dia para el turno {{ turnoSeleccionado }}.
+            El personal aún no publica la comida del día para el turno {{ turnoSeleccionado }}.
           </div>
         </section>
 
-        <!-- Menu regular -->
         <section class="space-y-3">
           <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500">
-            Menu regular
+            Menú regular
           </h3>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
@@ -99,13 +96,11 @@
           </div>
         </section>
 
-        <!-- Recordatorio visible en pantallas pequenas debajo del menu -->
         <div class="lg:hidden">
           <RecordatorioReglas />
         </div>
       </div>
 
-      <!-- Columna derecha en escritorio: carrito y recuadro de reglas -->
       <aside class="hidden lg:block space-y-4 lg:sticky lg:top-6">
         <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
           <CarritoPanel
@@ -131,7 +126,6 @@
       </aside>
     </div>
 
-    <!-- Barra fija inferior en movil cuando hay platillos en el carrito -->
     <div
       v-if="carrito.length > 0 && !bloqueoAgregar"
       class="lg:hidden fixed bottom-0 inset-x-0 bg-white border-t border-slate-200 px-4 pt-3 pb-[max(0.75rem,var(--safe-area-inset-bottom,0px))] flex items-center justify-between gap-3 z-30 shadow-md"
@@ -153,7 +147,6 @@
       </button>
     </div>
 
-    <!-- Panel deslizable movil para revisar carrito y pagar -->
     <div
       v-if="mostrarCarritoMovil"
       class="lg:hidden fixed inset-0 bg-slate-900/40 z-40 flex items-end"
@@ -277,7 +270,7 @@ async function cargarCatalogo() {
   })
 
   if (retirados.length > 0) {
-    avisoEnVivo.value = `Se retiro de tu carrito por actualizacion de disponibilidad o turno: ${retirados.join(', ')}.`
+    avisoEnVivo.value = `Se retiró de tu carrito por actualización de disponibilidad o turno: ${retirados.join(', ')}.`
   }
 }
 
@@ -339,7 +332,7 @@ function manejarPedidoCancelado(pedidoCancelado) {
 async function manejarPedidoVencido() {
   await Promise.all([cargarPedidoActivo(), refrescarPerfil()])
   if (!pedidoActivo.value) {
-    avisoEnVivo.value = 'El tiempo de recoleccion vencio. Consulta el detalle en Mis pedidos.'
+    avisoEnVivo.value = 'El tiempo de recolección venció. Consulta el detalle en Mis pedidos.'
   }
 }
 
@@ -407,7 +400,7 @@ onMounted(async () => {
         if (pedido.estadoPedido === 'entregado') {
           avisoEnVivo.value = `Tu pedido ${pedido.referencia} fue entregado.`
         } else if (pedido.estadoPedido === 'no_reclamado') {
-          avisoEnVivo.value = `Tu pedido ${pedido.referencia} vencio y fue marcado como no reclamado.`
+          avisoEnVivo.value = `Tu pedido ${pedido.referencia} venció y fue marcado como no reclamado.`
         } else {
           avisoEnVivo.value = `Tu pedido ${pedido.referencia} fue cancelado.`
         }

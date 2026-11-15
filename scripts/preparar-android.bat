@@ -30,7 +30,7 @@ if exist "%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe" (
     "%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe" reverse tcp:8080 tcp:8080 > nul 2>&1
     "%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe" reverse tcp:9092 tcp:9092 > nul 2>&1
 )
-echo Listo. Abre frontend\android en Android Studio y presiona Run.
-echo Con el telefono conectado por USB usa http://127.0.0.1:8080 y en emulador usa http://10.0.2.2:8080.
+echo Listo. Abrir frontend\android en Android Studio para compilar o ejecutar.
+echo Con el telefono por USB usar http://127.0.0.1:8080 y en emulador http://10.0.2.2:8080.
 echo.
 pause

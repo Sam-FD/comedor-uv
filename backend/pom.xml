@@ -14,7 +14,7 @@
     <artifactId>comedor-uv-backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>comedor-uv-backend</name>
-    <description>Backend para el prototipo de pedidos anticipados del Comedor Universitario UV</description>
+    <description>Backend para el sistema de pedidos anticipados del Comedor Universitario UV</description>
 
     <properties>
         <java.version>21</java.version>

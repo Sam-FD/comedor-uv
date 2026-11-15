@@ -30,7 +30,7 @@ export function formatearHora(iso) {
 export function etiquetaEstadoPedido(estado) {
   const mapa = {
     recibido: 'Recibido',
-    en_preparacion: 'En preparacion',
+    en_preparacion: 'En preparación',
     listo_para_recoger: 'Listo para recoger',
     entregado: 'Entregado',
     no_reclamado: 'No reclamado',
@@ -48,7 +48,7 @@ export function etiquetaEstadoPago(estado) {
     pendiente_mostrador: 'Pendiente en mostrador',
     retenido: 'Cobro retenido',
     cobrado: 'Cobrado',
-    liberado: 'Retencion liberada',
+    liberado: 'Retención liberada',
     cancelado: 'Cancelado'
   }
   return mapa[estado] || estado

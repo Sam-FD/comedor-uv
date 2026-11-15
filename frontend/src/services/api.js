@@ -56,7 +56,7 @@ api.interceptors.response.use(
   }
 )
 
-export function extraerMensajeError(error, respaldo = 'Ocurrio un error inesperado') {
+export function extraerMensajeError(error, respaldo = 'Ocurrió un error inesperado') {
   return error?.response?.data?.mensaje || error?.message || respaldo
 }
 

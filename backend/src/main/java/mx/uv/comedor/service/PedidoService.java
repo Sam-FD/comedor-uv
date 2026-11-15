@@ -90,7 +90,7 @@ public class PedidoService {
 
         if (!ConstantesComedor.ESTADO_LISTO.equals(pedido.getEstadoPedido())) {
             throw new ReglaNegocioException(
-                    "Solo se puede marcar como no reclamado un pedido que esta listo para recoger",
+                    "Solo se puede marcar como no reclamado un pedido que está listo para recoger",
                     HttpStatus.CONFLICT
             );
         }
@@ -104,7 +104,7 @@ public class PedidoService {
 
         if (!estadoOperacionService.isRecepcionAbierta()) {
             throw new ReglaNegocioException(
-                    "El comedor cerro temporalmente la recepcion de pedidos en linea",
+                    "El comedor cerró temporalmente la recepción de pedidos en línea",
                     HttpStatus.CONFLICT
             );
         }
@@ -118,7 +118,7 @@ public class PedidoService {
         }
         if (!ConstantesComedor.PAGO_APP_TARJETA.equals(modalidadPago)
                 && !ConstantesComedor.PAGO_MOSTRADOR.equals(modalidadPago)) {
-            throw new ReglaNegocioException("Modalidad de pago no valida");
+            throw new ReglaNegocioException("Modalidad de pago no válida");
         }
 
         Usuario usuario = usuarioRepository.findById(usuarioId)
@@ -231,7 +231,7 @@ public class PedidoService {
 
         if (!ConstantesComedor.ESTADO_RECIBIDO.equals(pedido.getEstadoPedido())) {
             throw new ReglaNegocioException(
-                    "Tu pedido ya paso a preparacion o fue cerrado y ya no puede cancelarse",
+                    "Tu pedido ya pasó a preparación o fue cerrado y ya no puede cancelarse",
                     HttpStatus.CONFLICT
             );
         }
@@ -274,11 +274,11 @@ public class PedidoService {
         procesarPedidosVencidos();
         String normalizada = referencia == null ? "" : referencia.trim().toUpperCase();
         if (!PATRON_REFERENCIA.matcher(normalizada).matches()) {
-            throw new ReglaNegocioException("La referencia debe tener formato de una letra y tres digitos (ej. A001)");
+            throw new ReglaNegocioException("La referencia debe tener formato de una letra y tres dígitos (ej. A001)");
         }
         Pedido pedido = pedidoRepository.findByFechaOperativaAndReferenciaConDetalle(LocalDate.now(), normalizada)
                 .orElseThrow(() -> new RecursoNoEncontradoException(
-                        "No existe ningun pedido hoy con la referencia " + normalizada
+                        "No existe ningún pedido hoy con la referencia " + normalizada
                 ));
         return PedidoDto.desdeEntidad(pedido);
     }
@@ -296,7 +296,7 @@ public class PedidoService {
 
         if (ConstantesComedor.ESTADO_NO_RECLAMADO.equals(actual)) {
             throw new ReglaNegocioException(
-                    "El pedido " + pedido.getReferencia() + " ya vencio y fue marcado como no reclamado",
+                    "El pedido " + pedido.getReferencia() + " ya venció y fue marcado como no reclamado",
                     HttpStatus.CONFLICT
             );
         }
@@ -331,7 +331,7 @@ public class PedidoService {
             pedido.setEstadoPago(ConstantesComedor.ESTADO_PAGO_COBRADO);
         } else {
             throw new ReglaNegocioException(
-                    "Transicion no permitida de '" + actual + "' a '" + nuevoEstado + "'"
+                    "Transición no permitida de '" + actual + "' a '" + nuevoEstado + "'"
             );
         }
 
@@ -401,7 +401,7 @@ public class PedidoService {
                     throw ex;
                 }
                 log.warn(
-                        "No se pudo liberar en pasarela la retencion del pedido {} al vencer automaticamente: {}",
+                        "No se pudo liberar en pasarela la retención del pedido {} al vencer automáticamente: {}",
                         pedido.getReferencia(),
                         ex.getMessage()
                 );
@@ -426,19 +426,19 @@ public class PedidoService {
         if (ConstantesComedor.MENU_COMIDA_DEL_DIA.equals(platillo.getTipoMenu())) {
             if (!hoy.equals(platillo.getFechaOperativa())) {
                 throw new ReglaNegocioException(
-                        "La comida del dia '" + platillo.getNombre() + "' no pertenece a la jornada actual"
+                        "La comida del día '" + platillo.getNombre() + "' no pertenece a la jornada actual"
                 );
             }
             if (!turnoPedido.equals(platillo.getTurno())) {
                 throw new ReglaNegocioException(
-                        "La comida del dia '" + platillo.getNombre() + "' es exclusiva del turno " + platillo.getTurno()
+                        "La comida del día '" + platillo.getNombre() + "' es exclusiva del turno " + platillo.getTurno()
                 );
             }
         } else if (ConstantesComedor.MENU_REGULAR.equals(platillo.getTipoMenu())) {
             if (!ConstantesComedor.TURNO_AMBOS.equals(platillo.getTurno())
                     && !turnoPedido.equals(platillo.getTurno())) {
                 throw new ReglaNegocioException(
-                        "El platillo '" + platillo.getNombre() + "' solo esta disponible en turno " + platillo.getTurno()
+                        "El platillo '" + platillo.getNombre() + "' solo está disponible en turno " + platillo.getTurno()
                 );
             }
         }
@@ -457,7 +457,7 @@ public class PedidoService {
             numero++;
         } else {
             if (letra == 'Z') {
-                throw new ReglaNegocioException("Se alcanzo el limite diario de referencias");
+                throw new ReglaNegocioException("Se alcanzó el límite diario de referencias");
             }
             letra = (char) (letra + 1);
             numero = 1;
@@ -465,7 +465,7 @@ public class PedidoService {
 
         String siguiente = String.format("%c%03d", letra, numero);
         if (!PATRON_REFERENCIA.matcher(siguiente).matches()) {
-            throw new IllegalStateException("Referencia generada con formato invalido: " + siguiente);
+            throw new IllegalStateException("Referencia generada con formato inválido: " + siguiente);
         }
         return siguiente;
     }

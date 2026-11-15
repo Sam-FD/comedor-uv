@@ -25,11 +25,11 @@ export function normalizarServidorMovil(url) {
   try {
     const parsed = new URL(limpia)
     if (!['http:', 'https:'].includes(parsed.protocol) || !parsed.hostname) {
-      return { ok: false, error: 'Ingresa una URL valida (ej. http://192.168.1.50:8080)' }
+      return { ok: false, error: 'Ingresa una URL válida (ej. http://192.168.1.50:8080)' }
     }
     return { ok: true, url: parsed.origin }
   } catch {
-    return { ok: false, error: 'Ingresa una URL valida (ej. http://192.168.1.50:8080)' }
+    return { ok: false, error: 'Ingresa una URL válida (ej. http://192.168.1.50:8080)' }
   }
 }
 

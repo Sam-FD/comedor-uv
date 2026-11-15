@@ -24,7 +24,7 @@
             class="flex-1 py-3 text-center border-b-2 transition-colors"
             :class="modo === 'login' ? 'border-uv-azul text-uv-azul bg-white' : 'border-transparent text-slate-500 hover:text-slate-700'"
           >
-            Iniciar sesion
+            Iniciar sesión
           </button>
           <button
             type="button"
@@ -44,7 +44,7 @@
           <form v-if="modo === 'login'" @submit.prevent="enviarLogin" class="space-y-4">
             <div>
               <label class="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-1.5">
-                Matricula o correo institucional
+                Matrícula o correo institucional
               </label>
               <input
                 v-model="formLogin.credencialOCorreo"
@@ -79,7 +79,7 @@
 
           <form v-else @submit.prevent="enviarRegistro" class="space-y-3.5">
             <div>
-              <label class="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-1">Matricula UV</label>
+              <label class="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-1">Matrícula UV</label>
               <input
                 v-model="formRegistro.credencialInstitucional"
                 type="text"
@@ -118,7 +118,7 @@
                 type="password"
                 required
                 minlength="6"
-                placeholder="Minimo 6 caracteres"
+                placeholder="Mínimo 6 caracteres"
                 class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-uv-azul/20 focus:border-uv-azul"
               />
             </div>
@@ -134,7 +134,6 @@
         </div>
       </div>
 
-      <!-- Accesos rapidos para probar perfiles y restricciones (solo visible en modo demo) -->
       <div v-if="modoDemo" class="bg-white border border-slate-200 rounded-xl shadow-sm p-4 space-y-2.5">
         <div class="flex items-center justify-between">
           <h2 class="text-xs font-semibold uppercase tracking-wide text-slate-500">
@@ -162,11 +161,10 @@
         </div>
       </div>
 
-      <!-- Configuracion de servidor visible unicamente dentro de la app movil Capacitor -->
       <div v-if="appMovil" class="bg-white border border-slate-200 rounded-xl shadow-sm p-4 space-y-2.5">
         <div class="flex items-center justify-between gap-2">
           <h2 class="text-xs font-semibold uppercase tracking-wide text-slate-500">
-            Servidor backend (movil)
+            Servidor backend (móvil)
           </h2>
           <button
             type="button"
@@ -185,7 +183,7 @@
           <input
             v-model="servidorInput"
             type="url"
-            placeholder="https://tu-backend.onrender.com"
+            placeholder="https://servidor-comedor.onrender.com"
             class="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-uv-azul/20 focus:border-uv-azul"
           />
           <div class="flex flex-wrap items-center gap-2">
@@ -272,7 +270,7 @@ const cuentasDemo = [
   },
   {
     credencial: 'S22018824',
-    nombre: 'Carlos Hernandez',
+    nombre: 'Carlos Hernández',
     etiqueta: '2 faltas',
     etiquetaClase: 'bg-slate-100 text-slate-700'
   },
@@ -317,7 +315,7 @@ async function enviarLogin() {
     guardarSesion(data.token, data.usuario)
     redirigirPorRol(data.usuario.rol)
   } catch (err) {
-    error.value = extraerMensajeError(err, 'No se pudo iniciar sesion')
+    error.value = extraerMensajeError(err, 'No se pudo iniciar sesión')
   } finally {
     cargando.value = false
   }
