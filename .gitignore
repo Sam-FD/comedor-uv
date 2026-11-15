@@ -1,0 +1,33 @@
+# Dependencias y artefactos generados en frontend
+frontend/node_modules/
+frontend/dist/
+
+# Compilados y cachés locales de Android / Gradle
+frontend/android/.gradle/
+frontend/android/build/
+frontend/android/app/build/
+frontend/android/capacitor-cordova-android-plugins/build/
+frontend/android/local.properties
+frontend/android/.idea/
+
+# Compilados de backend Maven
+backend/target/
+
+# Variables de entorno locales (se conserva .env.example)
+.env
+.env.*
+!.env.example
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+
+# Logs, editores y archivos del sistema
+*.log
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Documentos y mockups binarios locales
+docs/

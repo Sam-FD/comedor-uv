@@ -1,0 +1,15 @@
+{
+  "appId": "mx.uv.comedor",
+  "appName": "Comedor UV",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "http",
+    "cleartext": true
+  },
+  "plugins": {
+    "SystemBars": {
+      "insetsHandling": "css",
+      "style": "DARK"
+    }
+  }
+}

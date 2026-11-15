@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Comedor UV</string>
+    <string name="title_activity_main">Comedor UV</string>
+    <string name="package_name">mx.uv.comedor</string>
+    <string name="custom_url_scheme">mx.uv.comedor</string>
+</resources>
