@@ -61,6 +61,12 @@ export function obtenerServidorMovilEfectivo() {
 }
 
 export function obtenerApiBaseUrl() {
+  if (esAppMovil()) {
+    const guardado = obtenerServidorMovilGuardado()
+    if (guardado) {
+      return `${guardado}/api`
+    }
+  }
   if (import.meta.env.VITE_API_URL) {
     const limpio = import.meta.env.VITE_API_URL.trim().replace(/\/+$/, '')
     return /\/api$/i.test(limpio) ? limpio : `${limpio}/api`
