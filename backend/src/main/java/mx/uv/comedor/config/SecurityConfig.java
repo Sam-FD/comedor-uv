@@ -31,7 +31,7 @@ public class SecurityConfig {
     private final JwtFiltro jwtFiltro;
     private final ObjectMapper objectMapper;
 
-    @Value("${comedor.cors.origins:http://localhost,http://localhost:*,http://127.0.0.1,http://127.0.0.1:*,capacitor://localhost,https://localhost,http://192.168.*,http://10.*}")
+    @Value("${comedor.cors.origins:http://localhost,http://localhost:*,http://127.0.0.1,http://127.0.0.1:*,capacitor://localhost,https://localhost,https://*.vercel.app,https://*.onrender.com,http://192.168.*,http://10.*}")
     private List<String> allowedOriginPatterns;
 
     public SecurityConfig(JwtFiltro jwtFiltro, ObjectMapper objectMapper) {

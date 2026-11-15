@@ -134,8 +134,8 @@
         </div>
       </div>
 
-      <!-- Accesos rapidos para probar perfiles y restricciones -->
-      <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-4 space-y-2.5">
+      <!-- Accesos rapidos para probar perfiles y restricciones (solo visible en modo demo) -->
+      <div v-if="modoDemo" class="bg-white border border-slate-200 rounded-xl shadow-sm p-4 space-y-2.5">
         <div class="flex items-center justify-between">
           <h2 class="text-xs font-semibold uppercase tracking-wide text-slate-500">
             Cuentas de prueba
@@ -185,7 +185,7 @@
           <input
             v-model="servidorInput"
             type="url"
-            placeholder="http://192.168.1.50:8080"
+            placeholder="https://tu-backend.onrender.com"
             class="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-uv-azul/20 focus:border-uv-azul"
           />
           <div class="flex flex-wrap items-center gap-2">
@@ -197,6 +197,7 @@
               Guardar URL
             </button>
             <button
+              v-if="modoDemo"
               type="button"
               @click="usarServidorUsb"
               class="px-2.5 py-1.5 rounded-md border border-slate-300 text-xs text-slate-700 hover:bg-slate-50"
@@ -204,6 +205,7 @@
               USB (127.0.0.1)
             </button>
             <button
+              v-if="modoDemo"
               type="button"
               @click="usarServidorEmulador"
               class="px-2.5 py-1.5 rounded-md border border-slate-300 text-xs text-slate-600 hover:bg-slate-50"
@@ -231,6 +233,7 @@ import { guardarSesion } from '../stores/sesion'
 import { desconectarSocket } from '../services/socket'
 import {
   esAppMovil,
+  esModoDemo,
   guardarServidorMovil,
   obtenerServidorMovilEfectivo,
   obtenerServidorMovilGuardado
@@ -241,6 +244,7 @@ const modo = ref('login')
 const cargando = ref(false)
 const error = ref('')
 const appMovil = esAppMovil()
+const modoDemo = esModoDemo()
 const mostrarConfigServidor = ref(false)
 const servidorInput = ref(obtenerServidorMovilGuardado() || obtenerServidorMovilEfectivo())
 const servidorActual = ref(obtenerServidorMovilEfectivo())

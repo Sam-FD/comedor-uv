@@ -7,6 +7,10 @@ export function esAppMovil() {
   return Capacitor.isNativePlatform()
 }
 
+export function esModoDemo() {
+  return import.meta.env.VITE_MODO_DEMO === 'true'
+}
+
 export function obtenerServidorMovilGuardado() {
   return localStorage.getItem(CLAVE_SERVIDOR_MOVIL) || ''
 }
@@ -43,12 +47,23 @@ export function guardarServidorMovil(url) {
 }
 
 export function obtenerServidorMovilEfectivo() {
-  return obtenerServidorMovilGuardado() || RESPUESTO_MOVIL_POR_DEFECTO
+  const guardado = obtenerServidorMovilGuardado()
+  if (guardado) {
+    return guardado
+  }
+  if (import.meta.env.VITE_API_URL) {
+    const normalizado = normalizarServidorMovil(import.meta.env.VITE_API_URL)
+    if (normalizado.ok && normalizado.url) {
+      return normalizado.url
+    }
+  }
+  return RESPUESTO_MOVIL_POR_DEFECTO
 }
 
 export function obtenerApiBaseUrl() {
   if (import.meta.env.VITE_API_URL) {
-    return import.meta.env.VITE_API_URL.replace(/\/+$/, '')
+    const limpio = import.meta.env.VITE_API_URL.trim().replace(/\/+$/, '')
+    return /\/api$/i.test(limpio) ? limpio : `${limpio}/api`
   }
   if (esAppMovil()) {
     return `${obtenerServidorMovilEfectivo()}/api`
@@ -63,21 +78,17 @@ export function obtenerSocketUrl() {
   if (import.meta.env.VITE_SOCKET_URL) {
     return import.meta.env.VITE_SOCKET_URL.replace(/\/+$/, '')
   }
-  if (esAppMovil()) {
+  if (esAppMovil() || import.meta.env.VITE_API_URL) {
+    const base = esAppMovil() ? obtenerServidorMovilEfectivo() : obtenerApiBaseUrl()
     try {
-      const url = new URL(obtenerServidorMovilEfectivo())
-      // En servidores cloud HTTPS gratuitos de un solo puerto no existe el puerto 9092 expuesto
-      if (url.protocol === 'https:') {
-        return ''
+      const url = new URL(base)
+      if (url.protocol === 'https:' || (url.port && url.port !== '8080')) {
+        return url.origin
       }
       return `${url.protocol}//${url.hostname}:9092`
     } catch {
-      return 'http://127.0.0.1:9092'
+      return esAppMovil() ? 'http://127.0.0.1:9092' : ''
     }
-  }
-  // En produccion web con VITE_API_URL y sin VITE_SOCKET_URL, operar en modo HTTP de un solo puerto
-  if (import.meta.env.VITE_API_URL) {
-    return ''
   }
   return 'http://localhost:9092'
 }

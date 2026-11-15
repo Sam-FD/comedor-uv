@@ -8,6 +8,7 @@ import mx.uv.comedor.model.Usuario;
 import mx.uv.comedor.repository.PedidoRepository;
 import mx.uv.comedor.repository.PlatilloRepository;
 import mx.uv.comedor.repository.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,21 @@ public class DatosIniciales implements CommandLineRunner {
     private final PedidoRepository pedidoRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Value("${comedor.datos-demo:false}")
+    private boolean datosDemo;
+
+    @Value("${comedor.admin.credencial:P10001}")
+    private String adminCredencial;
+
+    @Value("${comedor.admin.nombre:Rosa Ramirez Ortega}")
+    private String adminNombre;
+
+    @Value("${comedor.admin.correo:r.ramirez@uv.mx}")
+    private String adminCorreo;
+
+    @Value("${comedor.admin.password:uv2026}")
+    private String adminPassword;
+
     public DatosIniciales(
             UsuarioRepository usuarioRepository,
             PlatilloRepository platilloRepository,
@@ -41,6 +57,14 @@ public class DatosIniciales implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) {
+        if (!datosDemo) {
+            asegurarCuentaPersonal();
+            if (platilloRepository.count() == 0) {
+                platilloRepository.saveAll(crearMenuRegularPorDefecto());
+            }
+            return;
+        }
+
         LocalDate hoy = LocalDate.now();
         LocalDateTime ahora = LocalDateTime.now();
 
@@ -72,23 +96,11 @@ public class DatosIniciales implements CommandLineRunner {
                     passwordDemo, ConstantesComedor.ROL_ESTUDIANTE, 0, null,
                     ConstantesComedor.RESTRICCION_NINGUNA, null
             );
-            Usuario rosa = crearUsuario(
-                    "P10001", "Rosa Ramirez Ortega", "r.ramirez@uv.mx",
-                    passwordDemo, ConstantesComedor.ROL_PERSONAL, 0, null,
-                    ConstantesComedor.RESTRICCION_NINGUNA, null
-            );
 
-            usuarioRepository.saveAll(List.of(laura, carlos, ana, diego, tomas, rosa));
+            usuarioRepository.saveAll(List.of(laura, carlos, ana, diego, tomas));
+            asegurarCuentaPersonal();
 
-            List<Platillo> regulares = platilloRepository.saveAll(List.of(
-                    crearPlatillo("Chilaquiles verdes con pollo", "Totopos banados en salsa verde, pollo deshebrado, crema y queso fresco", new BigDecimal("48.00"), ConstantesComedor.MENU_REGULAR, ConstantesComedor.TURNO_MATUTINO, null, true),
-                    crearPlatillo("Molletes gratinados (3 pzas)", "Bolillo con frijoles refritos, queso manchego gratinado y pico de gallo", new BigDecimal("38.00"), ConstantesComedor.MENU_REGULAR, ConstantesComedor.TURNO_AMBOS, null, true),
-                    crearPlatillo("Torta de milanesa de res", "Telera con milanesa, frijoles, aguacate, jitomate y chile chipotle", new BigDecimal("52.00"), ConstantesComedor.MENU_REGULAR, ConstantesComedor.TURNO_AMBOS, null, true),
-                    crearPlatillo("Tacos dorados de pollo (4 pzas)", "Acompanados de lechuga, crema, queso y salsa verde", new BigDecimal("45.00"), ConstantesComedor.MENU_REGULAR, ConstantesComedor.TURNO_VESPERTINO, null, true),
-                    crearPlatillo("Ensalada con pechuga asada", "Mezcla de lechugas, pepino, jitomate, croutones y aderezo ligero", new BigDecimal("55.00"), ConstantesComedor.MENU_REGULAR, ConstantesComedor.TURNO_AMBOS, null, true),
-                    crearPlatillo("Agua fresca del dia (500 ml)", "Vaso de 500 ml de jamaica, horchata o limon con chia", new BigDecimal("15.00"), ConstantesComedor.MENU_REGULAR, ConstantesComedor.TURNO_AMBOS, null, true),
-                    crearPlatillo("Cafe americano de olla", "Taza de cafe recien colado con un toque de canela", new BigDecimal("18.00"), ConstantesComedor.MENU_REGULAR, ConstantesComedor.TURNO_AMBOS, null, false)
-            ));
+            List<Platillo> regulares = platilloRepository.saveAll(crearMenuRegularPorDefecto());
 
             List<Platillo> comidasHoy = asegurarComidasDelDia(hoy);
 
@@ -142,8 +154,37 @@ public class DatosIniciales implements CommandLineRunner {
             hist2.setTotal(regulares.get(2).getPrecio());
             pedidoRepository.save(hist2);
         } else {
+            asegurarCuentaPersonal();
             asegurarComidasDelDia(hoy);
         }
+    }
+
+    private void asegurarCuentaPersonal() {
+        String credencial = adminCredencial.trim().toUpperCase();
+        if (!usuarioRepository.existsByCredencialInstitucionalIgnoreCase(credencial)) {
+            Usuario personal = crearUsuario(
+                    credencial,
+                    adminNombre.trim(),
+                    adminCorreo.trim().toLowerCase(),
+                    passwordEncoder.encode(adminPassword),
+                    ConstantesComedor.ROL_PERSONAL,
+                    0, null,
+                    ConstantesComedor.RESTRICCION_NINGUNA, null
+            );
+            usuarioRepository.save(personal);
+        }
+    }
+
+    private List<Platillo> crearMenuRegularPorDefecto() {
+        return List.of(
+                crearPlatillo("Chilaquiles verdes con pollo", "Totopos banados en salsa verde, pollo deshebrado, crema y queso fresco", new BigDecimal("48.00"), ConstantesComedor.MENU_REGULAR, ConstantesComedor.TURNO_MATUTINO, null, true),
+                crearPlatillo("Molletes gratinados (3 pzas)", "Bolillo con frijoles refritos, queso manchego gratinado y pico de gallo", new BigDecimal("38.00"), ConstantesComedor.MENU_REGULAR, ConstantesComedor.TURNO_AMBOS, null, true),
+                crearPlatillo("Torta de milanesa de res", "Telera con milanesa, frijoles, aguacate, jitomate y chile chipotle", new BigDecimal("52.00"), ConstantesComedor.MENU_REGULAR, ConstantesComedor.TURNO_AMBOS, null, true),
+                crearPlatillo("Tacos dorados de pollo (4 pzas)", "Acompanados de lechuga, crema, queso y salsa verde", new BigDecimal("45.00"), ConstantesComedor.MENU_REGULAR, ConstantesComedor.TURNO_VESPERTINO, null, true),
+                crearPlatillo("Ensalada con pechuga asada", "Mezcla de lechugas, pepino, jitomate, croutones y aderezo ligero", new BigDecimal("55.00"), ConstantesComedor.MENU_REGULAR, ConstantesComedor.TURNO_AMBOS, null, true),
+                crearPlatillo("Agua fresca del dia (500 ml)", "Vaso de 500 ml de jamaica, horchata o limon con chia", new BigDecimal("15.00"), ConstantesComedor.MENU_REGULAR, ConstantesComedor.TURNO_AMBOS, null, true),
+                crearPlatillo("Cafe americano de olla", "Taza de cafe recien colado con un toque de canela", new BigDecimal("18.00"), ConstantesComedor.MENU_REGULAR, ConstantesComedor.TURNO_AMBOS, null, false)
+        );
     }
 
     private List<Platillo> asegurarComidasDelDia(LocalDate hoy) {

@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: comedor-uv-backend
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/salud
+    envVars:
+      - key: PORT
+        value: "10000"
+      - key: DATOS_DEMO
+        value: "false"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DB_URL
+        sync: false
+      - key: CORS_ORIGINS
+        value: "https://*.vercel.app,https://*.onrender.com,capacitor://localhost,http://localhost,https://localhost"

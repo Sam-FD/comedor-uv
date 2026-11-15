@@ -1,0 +1,8 @@
+frontend/
+backend/target/
+.git/
+docs/
+scripts/
+*.bat
+*.md
+.env*

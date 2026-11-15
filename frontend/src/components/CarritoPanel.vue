@@ -110,15 +110,15 @@
       <div v-if="modalidadPago === 'app_tarjeta'" class="rounded-lg border border-slate-200 bg-slate-50 p-3 space-y-2.5 text-xs">
         <div class="flex flex-wrap items-center justify-between gap-2">
           <div class="flex items-center gap-1.5">
-            <p class="font-semibold text-slate-800">Pasarela de prueba</p>
+            <p class="font-semibold text-slate-800">{{ modoDemo ? 'Pasarela de prueba' : 'Datos de tarjeta' }}</p>
             <span
               class="px-1.5 py-0.5 rounded text-[10px] font-semibold"
-              :class="esStripeReal ? 'bg-uv-verde-claro text-uv-verde-oscuro' : 'bg-uv-azul-claro text-uv-azul'"
+              :class="modoDemo ? (esStripeReal ? 'bg-uv-verde-claro text-uv-verde-oscuro' : 'bg-uv-azul-claro text-uv-azul') : 'bg-slate-200 text-slate-700'"
             >
-              {{ esStripeReal ? 'Stripe Test' : 'Sandbox local' }}
+              {{ modoDemo ? (esStripeReal ? 'Stripe Test' : 'Sandbox local') : 'Retencion bancaria' }}
             </span>
           </div>
-          <div class="flex items-center gap-2">
+          <div v-if="modoDemo" class="flex items-center gap-2">
             <button
               type="button"
               @click="rellenarTarjetaPrueba('aprobada')"
@@ -211,6 +211,7 @@
 <script setup>
 import { computed, reactive, ref } from 'vue'
 import { formatearMoneda } from '../utils/formatos'
+import { esModoDemo } from '../utils/entorno'
 
 const props = defineProps({
   carrito: { type: Array, required: true },
@@ -230,6 +231,7 @@ const props = defineProps({
 const emit = defineEmits(['aumentar', 'disminuir', 'update:modalidadPago', 'enviar'])
 
 const esStripeReal = computed(() => props.estadoPasarela?.modo === 'stripe_test')
+const modoDemo = esModoDemo()
 
 const tarjeta = reactive({
   titular: '',
