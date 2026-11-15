@@ -198,7 +198,7 @@ public class DatosIniciales implements CommandLineRunner {
         Platillo matutino = crearPlatillo(
                 "Pechuga a la plancha con arroz y frijoles",
                 "Incluye plato principal, arroz rojo, frijoles de la olla, tortillas y agua de jamaica",
-                new BigDecimal("35.00"),
+                new BigDecimal("30.00"),
                 ConstantesComedor.MENU_COMIDA_DEL_DIA,
                 ConstantesComedor.TURNO_MATUTINO,
                 hoy,
@@ -207,7 +207,7 @@ public class DatosIniciales implements CommandLineRunner {
         Platillo vespertino = crearPlatillo(
                 "Enchiladas veracruzanas de pollo",
                 "Incluye 4 enchiladas en salsa de jitomate, frijoles refritos, queso fresco y agua de horchata",
-                new BigDecimal("35.00"),
+                new BigDecimal("30.00"),
                 ConstantesComedor.MENU_COMIDA_DEL_DIA,
                 ConstantesComedor.TURNO_VESPERTINO,
                 hoy,

@@ -98,7 +98,7 @@
 
         <section class="space-y-3">
           <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500">
-            Menú regular
+            Menú
           </h3>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">

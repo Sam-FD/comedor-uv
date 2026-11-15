@@ -15,7 +15,7 @@ Requisitos: **Java 21**, **Node.js + npm** y **Docker Desktop**.
 1. Ejecutar `iniciar.bat` en la raíz del proyecto para levantar PostgreSQL, backend en `8080`, Socket.IO en `9092` y frontend en `http://localhost:5173`.
 2. Ejecutar `detener.bat` para detener todos los servicios.
 
-Por defecto (`DATOS_DEMO=false`) únicamente se inicializa la cuenta de personal (`P10001` / `uv2026`, configurable por variables de entorno) y el menú regular base; el registro de estudiantes y la publicación de la comida del día se realizan desde la aplicación. Para cargar usuarios y pedidos de ejemplo en entorno local, definir `DATOS_DEMO=true` y `VITE_MODO_DEMO=true`.
+Por defecto (`DATOS_DEMO=false`) únicamente se inicializa la cuenta de personal (`P10001` / `uv2026`, configurable por variables de entorno) y el menú base; el registro de estudiantes y la publicación de la comida del día se realizan desde la aplicación. Para cargar usuarios y pedidos de ejemplo en entorno local, definir `DATOS_DEMO=true` y `VITE_MODO_DEMO=true`.
 
 Scripts auxiliares en `scripts/`:
 

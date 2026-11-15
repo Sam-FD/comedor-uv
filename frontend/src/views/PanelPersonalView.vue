@@ -254,7 +254,7 @@
 
         <section class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
           <div class="px-5 py-4 border-b border-slate-200">
-            <h2 class="text-base font-bold text-slate-900">Menú regular</h2>
+            <h2 class="text-base font-bold text-slate-900">Menú</h2>
             <p class="text-xs text-slate-500">Los platillos no se eliminan para conservar el histórico de ventas.</p>
           </div>
 
@@ -355,7 +355,7 @@
         </section>
 
         <section class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-          <h3 class="text-sm font-bold text-slate-900 mb-3">Agregar al menú regular</h3>
+          <h3 class="text-sm font-bold text-slate-900 mb-3">Agregar al menú</h3>
           <form @submit.prevent="agregarPlatilloRegular" class="space-y-3 text-sm">
             <div>
               <label class="block text-xs font-medium text-slate-700 mb-1">Nombre</label>
@@ -676,7 +676,7 @@
       @click.self="platilloEnEdicion = null"
     >
       <div class="bg-white border border-slate-200 rounded-xl shadow-lg max-w-md w-full p-5 space-y-4 max-h-[90vh] overflow-y-auto">
-        <h3 class="text-base font-bold text-slate-900">Editar platillo del menú regular</h3>
+        <h3 class="text-base font-bold text-slate-900">Editar platillo del menú</h3>
         <form @submit.prevent="guardarEdicionPlatillo" class="space-y-3 text-sm">
           <div>
             <label class="block text-xs font-medium text-slate-700 mb-1">Nombre</label>
@@ -781,7 +781,7 @@ const formComidaDia = reactive({
   turno: 'matutino',
   nombre: '',
   descripcion: '',
-  precio: '35.00'
+  precio: '30.00'
 })
 
 const formRegular = reactive({
@@ -1004,7 +1004,7 @@ async function guardarEdicionPlatillo() {
     })
     platilloEnEdicion.value = null
     await cargarCatalogo()
-    mensajeOperacion.value = 'Platillo actualizado en el menú regular.'
+    mensajeOperacion.value = 'Platillo actualizado en el menú.'
   } catch (err) {
     errorOperacion.value = extraerMensajeError(err, 'No se pudo actualizar el platillo')
   }
@@ -1041,7 +1041,7 @@ async function agregarPlatilloRegular() {
     formRegular.descripcion = ''
     formRegular.precio = ''
     await cargarCatalogo()
-    mensajeOperacion.value = 'Platillo agregado al menú regular.'
+    mensajeOperacion.value = 'Platillo agregado al menú.'
   } catch (err) {
     errorOperacion.value = extraerMensajeError(err, 'No se pudo agregar el platillo')
   }
