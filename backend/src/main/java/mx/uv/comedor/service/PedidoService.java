@@ -1,12 +1,11 @@
 package mx.uv.comedor.service;
 
 import mx.uv.comedor.config.ReglasComedorProperties;
-import mx.uv.comedor.dto.CrearPedidoRequest;
-import mx.uv.comedor.dto.HistoricoResponse;
-import mx.uv.comedor.dto.ItemPedidoRequest;
-import mx.uv.comedor.dto.PedidoDto;
-import mx.uv.comedor.dto.TransaccionPasarelaDto;
-import mx.uv.comedor.dto.UsuarioDto;
+import mx.uv.comedor.dto.AuthDtos.UsuarioDto;
+import mx.uv.comedor.dto.PedidoDtos.CrearPedidoRequest;
+import mx.uv.comedor.dto.PedidoDtos.HistoricoResponse;
+import mx.uv.comedor.dto.PedidoDtos.ItemPedidoRequest;
+import mx.uv.comedor.dto.PedidoDtos.PedidoDto;
 import mx.uv.comedor.exception.RecursoNoEncontradoException;
 import mx.uv.comedor.exception.ReglaNegocioException;
 import mx.uv.comedor.model.ConstantesComedor;
@@ -18,8 +17,6 @@ import mx.uv.comedor.repository.PedidoRepository;
 import mx.uv.comedor.repository.PlatilloRepository;
 import mx.uv.comedor.repository.UsuarioRepository;
 import mx.uv.comedor.socket.SocketNotificador;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +32,6 @@ import java.util.regex.Pattern;
 @Service
 public class PedidoService {
 
-    private static final Logger log = LoggerFactory.getLogger(PedidoService.class);
     private static final Pattern PATRON_REFERENCIA = Pattern.compile("^[A-Z][0-9]{3}$");
 
     private final PedidoRepository pedidoRepository;
@@ -70,14 +66,16 @@ public class PedidoService {
     @Transactional
     public int procesarPedidosVencidos() {
         LocalDateTime ahora = LocalDateTime.now();
-        List<Pedido> vencidos = pedidoRepository.findPedidosListosVencidos(ConstantesComedor.ESTADO_LISTO, ahora);
+        List<Pedido> vencidos = pedidoRepository.findByEstadoPedidoAndFechaLimiteRecoleccionLessThanEqual(
+                ConstantesComedor.ESTADO_LISTO, ahora
+        );
 
         if (vencidos.isEmpty()) {
             return 0;
         }
 
         for (Pedido pedido : vencidos) {
-            cerrarPedidoPorVencimiento(pedido, ahora, true);
+            cerrarPedidoPorVencimiento(pedido, ahora);
         }
 
         return vencidos.size();
@@ -85,7 +83,7 @@ public class PedidoService {
 
     @Transactional
     public PedidoDto forzarVencimientoPedido(Integer pedidoId) {
-        Pedido pedido = pedidoRepository.findByIdConDetalle(pedidoId)
+        Pedido pedido = pedidoRepository.findConDetalleById(pedidoId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Pedido no encontrado"));
 
         if (!ConstantesComedor.ESTADO_LISTO.equals(pedido.getEstadoPedido())) {
@@ -95,7 +93,7 @@ public class PedidoService {
             );
         }
 
-        return cerrarPedidoPorVencimiento(pedido, LocalDateTime.now(), false);
+        return cerrarPedidoPorVencimiento(pedido, LocalDateTime.now());
     }
 
     @Transactional
@@ -132,7 +130,9 @@ public class PedidoService {
         }
         restriccionService.validarPermisoDePedido(usuario, modalidadPago, ahora);
 
-        List<Pedido> activos = pedidoRepository.findActivosPorUsuario(usuarioId, ConstantesComedor.ESTADOS_ACTIVOS);
+        List<Pedido> activos = pedidoRepository.findByUsuarioIdAndEstadoPedidoInOrderByFechaCreacionDesc(
+                usuarioId, ConstantesComedor.ESTADOS_ACTIVOS
+        );
         if (!activos.isEmpty()) {
             String refActiva = activos.get(0).getReferencia();
             throw new ReglaNegocioException(
@@ -191,28 +191,11 @@ public class PedidoService {
 
         pedido.setTotal(total);
 
-        TransaccionPasarelaDto transaccion = null;
         if (ConstantesComedor.PAGO_APP_TARJETA.equals(modalidadPago)) {
-            transaccion = pasarelaPagoService.autorizarRetencion(
-                    pedido.getReferencia(),
-                    total,
-                    request.tarjetaPrueba()
-            );
+            pasarelaPagoService.autorizarRetencion(pedido.getReferencia(), total, request.numeroTarjeta());
         }
 
-        Pedido guardado;
-        try {
-            guardado = pedidoRepository.save(pedido);
-            if (transaccion != null) {
-                pasarelaPagoService.asociarPedido(guardado.getId(), transaccion);
-            }
-        } catch (RuntimeException ex) {
-            if (transaccion != null) {
-                pasarelaPagoService.liberarRetencionHuerfana(transaccion);
-            }
-            throw ex;
-        }
-
+        Pedido guardado = pedidoRepository.save(pedido);
         PedidoDto dto = PedidoDto.desdeEntidad(guardado);
         socketNotificador.notificarNuevoPedido(dto);
         return dto;
@@ -222,7 +205,7 @@ public class PedidoService {
     public PedidoDto cancelarPedidoEstudiante(Integer pedidoId, Integer usuarioId) {
         procesarPedidosVencidos();
 
-        Pedido pedido = pedidoRepository.findByIdConDetalle(pedidoId)
+        Pedido pedido = pedidoRepository.findConDetalleById(pedidoId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Pedido no encontrado"));
 
         if (!pedido.getUsuario().getId().equals(usuarioId)) {
@@ -239,7 +222,7 @@ public class PedidoService {
         pedido.setEstadoPedido(ConstantesComedor.ESTADO_CANCELADO);
         pedido.setFechaCierre(LocalDateTime.now());
         if (ConstantesComedor.PAGO_APP_TARJETA.equals(pedido.getModalidadPago())) {
-            pasarelaPagoService.liberarRetencion(pedido.getId());
+            pasarelaPagoService.liberarRetencion(pedido.getReferencia());
             pedido.setEstadoPago(ConstantesComedor.ESTADO_PAGO_LIBERADO);
         } else {
             pedido.setEstadoPago(ConstantesComedor.ESTADO_PAGO_CANCELADO);
@@ -251,32 +234,29 @@ public class PedidoService {
         return dto;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<PedidoDto> obtenerMisPedidos(Integer usuarioId) {
-        procesarPedidosVencidos();
-        return pedidoRepository.findHistorialPorUsuario(usuarioId)
+        return pedidoRepository.findByUsuarioIdOrderByFechaCreacionDesc(usuarioId)
                 .stream()
                 .map(PedidoDto::desdeEntidad)
                 .toList();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<PedidoDto> obtenerColaOperativa() {
-        procesarPedidosVencidos();
-        return pedidoRepository.findColaOperativa(ConstantesComedor.ESTADOS_ACTIVOS)
+        return pedidoRepository.findByEstadoPedidoInOrderByFechaCreacionAsc(ConstantesComedor.ESTADOS_ACTIVOS)
                 .stream()
                 .map(PedidoDto::desdeEntidad)
                 .toList();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public PedidoDto buscarPorReferenciaHoy(String referencia) {
-        procesarPedidosVencidos();
         String normalizada = referencia == null ? "" : referencia.trim().toUpperCase();
         if (!PATRON_REFERENCIA.matcher(normalizada).matches()) {
             throw new ReglaNegocioException("La referencia debe tener formato de una letra y tres dígitos (ej. A001)");
         }
-        Pedido pedido = pedidoRepository.findByFechaOperativaAndReferenciaConDetalle(LocalDate.now(), normalizada)
+        Pedido pedido = pedidoRepository.findByFechaOperativaAndReferenciaIgnoreCase(LocalDate.now(), normalizada)
                 .orElseThrow(() -> new RecursoNoEncontradoException(
                         "No existe ningún pedido hoy con la referencia " + normalizada
                 ));
@@ -288,7 +268,7 @@ public class PedidoService {
         procesarPedidosVencidos();
 
         String nuevoEstado = nuevoEstadoRaw.trim().toLowerCase();
-        Pedido pedido = pedidoRepository.findByIdConDetalle(pedidoId)
+        Pedido pedido = pedidoRepository.findConDetalleById(pedidoId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Pedido no encontrado"));
 
         String actual = pedido.getEstadoPedido();
@@ -324,7 +304,7 @@ public class PedidoService {
         } else if (ConstantesComedor.ESTADO_LISTO.equals(actual)
                 && ConstantesComedor.ESTADO_ENTREGADO.equals(nuevoEstado)) {
             if (ConstantesComedor.PAGO_APP_TARJETA.equals(pedido.getModalidadPago())) {
-                pasarelaPagoService.confirmarCobro(pedido.getId());
+                pasarelaPagoService.confirmarCobro(pedido.getReferencia(), pedido.getTotal());
             }
             pedido.setEstadoPedido(ConstantesComedor.ESTADO_ENTREGADO);
             pedido.setFechaCierre(ahora);
@@ -341,10 +321,8 @@ public class PedidoService {
         return dto;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public HistoricoResponse obtenerHistorico(LocalDate fecha, String turno, String modalidadPago, String estadoPedido) {
-        procesarPedidosVencidos();
-
         String filtroTurno = normalizarFiltro(turno);
         String filtroModalidad = normalizarFiltro(modalidadPago);
         String filtroEstado = normalizarFiltro(estadoPedido);
@@ -388,24 +366,13 @@ public class PedidoService {
         );
     }
 
-    private PedidoDto cerrarPedidoPorVencimiento(Pedido pedido, LocalDateTime ahora, boolean tolerarFalloPasarela) {
+    private PedidoDto cerrarPedidoPorVencimiento(Pedido pedido, LocalDateTime ahora) {
         pedido.setEstadoPedido(ConstantesComedor.ESTADO_NO_RECLAMADO);
         pedido.setFechaCierre(ahora);
 
         if (ConstantesComedor.PAGO_APP_TARJETA.equals(pedido.getModalidadPago())) {
-            try {
-                pasarelaPagoService.liberarRetencion(pedido.getId());
-                pedido.setEstadoPago(ConstantesComedor.ESTADO_PAGO_LIBERADO);
-            } catch (ReglaNegocioException ex) {
-                if (!tolerarFalloPasarela) {
-                    throw ex;
-                }
-                log.warn(
-                        "No se pudo liberar en pasarela la retención del pedido {} al vencer automáticamente: {}",
-                        pedido.getReferencia(),
-                        ex.getMessage()
-                );
-            }
+            pasarelaPagoService.liberarRetencion(pedido.getReferencia());
+            pedido.setEstadoPago(ConstantesComedor.ESTADO_PAGO_LIBERADO);
         } else {
             pedido.setEstadoPago(ConstantesComedor.ESTADO_PAGO_CANCELADO);
         }

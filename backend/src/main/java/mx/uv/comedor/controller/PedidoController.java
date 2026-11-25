@@ -2,8 +2,8 @@ package mx.uv.comedor.controller;
 
 import jakarta.validation.Valid;
 import mx.uv.comedor.config.UsuarioAutenticado;
-import mx.uv.comedor.dto.CrearPedidoRequest;
-import mx.uv.comedor.dto.PedidoDto;
+import mx.uv.comedor.dto.PedidoDtos.CrearPedidoRequest;
+import mx.uv.comedor.dto.PedidoDtos.PedidoDto;
 import mx.uv.comedor.service.PedidoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +22,6 @@ import java.util.List;
 public class PedidoController {
 
     private final PedidoService pedidoService;
-    private final Object lockCreacion = new Object();
 
     public PedidoController(PedidoService pedidoService) {
         this.pedidoService = pedidoService;
@@ -33,11 +32,7 @@ public class PedidoController {
             @AuthenticationPrincipal UsuarioAutenticado usuario,
             @Valid @RequestBody CrearPedidoRequest request
     ) {
-        PedidoDto creado;
-        synchronized (lockCreacion) {
-            creado = pedidoService.crearPedido(usuario.id(), request);
-        }
-        return ResponseEntity.status(HttpStatus.CREATED).body(creado);
+        return ResponseEntity.status(HttpStatus.CREATED).body(pedidoService.crearPedido(usuario.id(), request));
     }
 
     @PostMapping("/{id}/cancelar")

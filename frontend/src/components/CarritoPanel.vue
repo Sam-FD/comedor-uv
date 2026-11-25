@@ -108,33 +108,11 @@
       </div>
 
       <div v-if="modalidadPago === 'app_tarjeta'" class="rounded-lg border border-slate-200 bg-slate-50 p-3 space-y-2.5 text-xs">
-        <div class="flex flex-wrap items-center justify-between gap-2">
-          <div class="flex items-center gap-1.5">
-            <p class="font-semibold text-slate-800">{{ modoDemo ? 'Pasarela de prueba' : 'Datos de tarjeta' }}</p>
-            <span
-              class="px-1.5 py-0.5 rounded text-[10px] font-semibold"
-              :class="modoDemo ? (esStripeReal ? 'bg-uv-verde-claro text-uv-verde-oscuro' : 'bg-uv-azul-claro text-uv-azul') : 'bg-slate-200 text-slate-700'"
-            >
-              {{ modoDemo ? (esStripeReal ? 'Stripe Test' : 'Sandbox local') : 'Retención bancaria' }}
-            </span>
-          </div>
-          <div v-if="modoDemo" class="flex items-center gap-2">
-            <button
-              type="button"
-              @click="rellenarTarjetaPrueba('aprobada')"
-              class="text-uv-azul hover:underline font-medium"
-            >
-              Aprobada (4242)
-            </button>
-            <span class="text-slate-300">|</span>
-            <button
-              type="button"
-              @click="rellenarTarjetaPrueba('declinada')"
-              class="text-slate-600 hover:text-red-700 hover:underline font-medium"
-            >
-              Rechazo (0002)
-            </button>
-          </div>
+        <div class="flex items-center justify-between gap-2">
+          <p class="font-semibold text-slate-800">Datos de tarjeta</p>
+          <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-slate-200 text-slate-700">
+            Retención bancaria
+          </span>
         </div>
 
         <div>
@@ -209,9 +187,8 @@
 </template>
 
 <script setup>
-import { computed, reactive, ref } from 'vue'
+import { reactive, ref } from 'vue'
 import { formatearMoneda } from '../utils/formatos'
-import { esModoDemo } from '../utils/entorno'
 
 const props = defineProps({
   carrito: { type: Array, required: true },
@@ -224,14 +201,10 @@ const props = defineProps({
   pedidoActivo: { type: Object, default: null },
   bloqueoAgregar: { type: Boolean, default: false },
   enviando: { type: Boolean, default: false },
-  errorPedido: { type: String, default: '' },
-  estadoPasarela: { type: Object, default: null }
+  errorPedido: { type: String, default: '' }
 })
 
 const emit = defineEmits(['aumentar', 'disminuir', 'update:modalidadPago', 'enviar'])
-
-const esStripeReal = computed(() => props.estadoPasarela?.modo === 'stripe_test')
-const modoDemo = esModoDemo()
 
 const tarjeta = reactive({
   titular: '',
@@ -254,14 +227,6 @@ function formatearVigencia(evento) {
 
 function formatearCvv(evento) {
   tarjeta.cvv = evento.target.value.replace(/\D/g, '').slice(0, 4)
-}
-
-function rellenarTarjetaPrueba(tipo = 'aprobada') {
-  tarjeta.titular = 'Estudiante UV'
-  tarjeta.numero = tipo === 'declinada' ? '4000 0000 0000 0002' : '4242 4242 4242 4242'
-  tarjeta.vigencia = '09/29'
-  tarjeta.cvv = '412'
-  errorLocal.value = ''
 }
 
 function intentarEnviar() {
@@ -296,6 +261,6 @@ function intentarEnviar() {
       return
     }
   }
-  emit('enviar', { tarjetaPrueba: digitos || null })
+  emit('enviar', { numeroTarjeta: digitos || null })
 }
 </script>

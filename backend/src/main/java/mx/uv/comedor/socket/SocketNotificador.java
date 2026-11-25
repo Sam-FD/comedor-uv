@@ -3,8 +3,8 @@ package mx.uv.comedor.socket;
 import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
 import mx.uv.comedor.config.JwtService;
-import mx.uv.comedor.dto.PedidoDto;
-import mx.uv.comedor.dto.UsuarioDto;
+import mx.uv.comedor.dto.AuthDtos.UsuarioDto;
+import mx.uv.comedor.dto.PedidoDtos.PedidoDto;
 import mx.uv.comedor.model.ConstantesComedor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,9 +19,6 @@ public class SocketNotificador implements CommandLineRunner {
     private static final Logger log = LoggerFactory.getLogger(SocketNotificador.class);
     private static final String SALA_CATALOGO = "sala:catalogo";
     private static final String SALA_PERSONAL = "sala:personal";
-
-    @org.springframework.beans.factory.annotation.Value("${comedor.socket.habilitado:true}")
-    private boolean habilitado;
 
     private final SocketIOServer server;
     private final JwtService jwtService;
@@ -43,19 +40,24 @@ public class SocketNotificador implements CommandLineRunner {
         );
 
         server.addEventListener("unirse_sala", UnirseSalaPayload.class, (client, data, ack) -> {
-            if (data == null || data.getToken() == null || !jwtService.esValido(data.getToken())) {
+            if (data == null || data.getToken() == null) {
                 return;
             }
-            Integer userId = jwtService.obtenerUserId(data.getToken());
-            String rol = jwtService.obtenerRol(data.getToken());
+            jwtService.validarYExtraerClaims(data.getToken()).ifPresent(claims -> {
+                Integer userId = claims.get("userId", Integer.class);
+                String rol = claims.get("rol", String.class);
+                if (userId == null) {
+                    return;
+                }
 
-            dejarSalasUsuario(client);
-            client.joinRoom(SALA_CATALOGO);
-            client.joinRoom(salaUsuario(userId));
+                dejarSalasUsuario(client);
+                client.joinRoom(SALA_CATALOGO);
+                client.joinRoom(salaUsuario(userId));
 
-            if (ConstantesComedor.ROL_PERSONAL.equals(rol)) {
-                client.joinRoom(SALA_PERSONAL);
-            }
+                if (ConstantesComedor.ROL_PERSONAL.equals(rol)) {
+                    client.joinRoom(SALA_PERSONAL);
+                }
+            });
         });
     }
 
@@ -69,10 +71,6 @@ public class SocketNotificador implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        if (!habilitado) {
-            log.info("Servidor Socket.IO deshabilitado (modo un solo puerto); se usara consulta periodica en el cliente.");
-            return;
-        }
         server.start();
         log.info("Servidor Socket.IO escuchando en el puerto {}", server.getConfiguration().getPort());
     }

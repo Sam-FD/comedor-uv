@@ -1,6 +1,7 @@
 package mx.uv.comedor.repository;
 
 import mx.uv.comedor.model.Pedido;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,71 +13,23 @@ import java.util.Optional;
 
 public interface PedidoRepository extends JpaRepository<Pedido, Integer> {
 
-    @Query("""
-        SELECT DISTINCT p FROM Pedido p
-        JOIN FETCH p.usuario
-        LEFT JOIN FETCH p.detalles d
-        LEFT JOIN FETCH d.platillo
-        WHERE p.id = :id
-    """)
-    Optional<Pedido> findByIdConDetalle(@Param("id") Integer id);
+    @EntityGraph(attributePaths = {"usuario", "detalles", "detalles.platillo"})
+    Optional<Pedido> findConDetalleById(Integer id);
 
-    @Query("""
-        SELECT DISTINCT p FROM Pedido p
-        JOIN FETCH p.usuario
-        LEFT JOIN FETCH p.detalles d
-        LEFT JOIN FETCH d.platillo
-        WHERE p.fechaOperativa = :fecha AND UPPER(p.referencia) = UPPER(:referencia)
-    """)
-    Optional<Pedido> findByFechaOperativaAndReferenciaConDetalle(
-            @Param("fecha") LocalDate fecha,
-            @Param("referencia") String referencia
-    );
+    @EntityGraph(attributePaths = {"usuario", "detalles", "detalles.platillo"})
+    Optional<Pedido> findByFechaOperativaAndReferenciaIgnoreCase(LocalDate fechaOperativa, String referencia);
 
-    @Query("""
-        SELECT DISTINCT p FROM Pedido p
-        JOIN FETCH p.usuario
-        LEFT JOIN FETCH p.detalles d
-        LEFT JOIN FETCH d.platillo
-        WHERE p.usuario.id = :usuarioId AND p.estadoPedido IN :estados
-        ORDER BY p.fechaCreacion DESC
-    """)
-    List<Pedido> findActivosPorUsuario(
-            @Param("usuarioId") Integer usuarioId,
-            @Param("estados") List<String> estados
-    );
+    @EntityGraph(attributePaths = {"usuario", "detalles", "detalles.platillo"})
+    List<Pedido> findByUsuarioIdAndEstadoPedidoInOrderByFechaCreacionDesc(Integer usuarioId, List<String> estados);
 
-    @Query("""
-        SELECT DISTINCT p FROM Pedido p
-        JOIN FETCH p.usuario
-        LEFT JOIN FETCH p.detalles d
-        LEFT JOIN FETCH d.platillo
-        WHERE p.usuario.id = :usuarioId
-        ORDER BY p.fechaCreacion DESC
-    """)
-    List<Pedido> findHistorialPorUsuario(@Param("usuarioId") Integer usuarioId);
+    @EntityGraph(attributePaths = {"usuario", "detalles", "detalles.platillo"})
+    List<Pedido> findByUsuarioIdOrderByFechaCreacionDesc(Integer usuarioId);
 
-    @Query("""
-        SELECT DISTINCT p FROM Pedido p
-        JOIN FETCH p.usuario
-        LEFT JOIN FETCH p.detalles d
-        LEFT JOIN FETCH d.platillo
-        WHERE p.estadoPedido IN :estados
-        ORDER BY p.fechaCreacion ASC
-    """)
-    List<Pedido> findColaOperativa(@Param("estados") List<String> estados);
+    @EntityGraph(attributePaths = {"usuario", "detalles", "detalles.platillo"})
+    List<Pedido> findByEstadoPedidoInOrderByFechaCreacionAsc(List<String> estados);
 
-    @Query("""
-        SELECT DISTINCT p FROM Pedido p
-        JOIN FETCH p.usuario
-        LEFT JOIN FETCH p.detalles d
-        LEFT JOIN FETCH d.platillo
-        WHERE p.estadoPedido = :estado AND p.fechaLimiteRecoleccion <= :ahora
-    """)
-    List<Pedido> findPedidosListosVencidos(
-            @Param("estado") String estado,
-            @Param("ahora") LocalDateTime ahora
-    );
+    @EntityGraph(attributePaths = {"usuario", "detalles", "detalles.platillo"})
+    List<Pedido> findByEstadoPedidoAndFechaLimiteRecoleccionLessThanEqual(String estadoPedido, LocalDateTime ahora);
 
     @Query("""
         SELECT p.referencia FROM Pedido p
@@ -85,11 +38,9 @@ public interface PedidoRepository extends JpaRepository<Pedido, Integer> {
     """)
     List<String> findReferenciasDelDiaDesc(@Param("fecha") LocalDate fecha);
 
+    @EntityGraph(attributePaths = {"usuario", "detalles", "detalles.platillo"})
     @Query("""
-        SELECT DISTINCT p FROM Pedido p
-        JOIN FETCH p.usuario
-        LEFT JOIN FETCH p.detalles d
-        LEFT JOIN FETCH d.platillo
+        SELECT p FROM Pedido p
         WHERE p.estadoPedido IN :estadosCerrados
           AND (:fecha IS NULL OR p.fechaOperativa = :fecha)
           AND (:turno IS NULL OR p.turno = :turno)

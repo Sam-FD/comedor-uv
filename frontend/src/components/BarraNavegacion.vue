@@ -14,13 +14,13 @@
       <div class="order-2 md:order-3 flex items-center gap-2 sm:gap-2.5 shrink-0">
         <div
           class="flex items-center gap-1.5 text-xs bg-black/15 px-2.5 py-1 rounded-full text-blue-50"
-          :title="socketConectado ? 'Tiempo real activo' : (socketDisponible ? 'Reconectando tiempo real con respaldo periódico' : 'Actualización automática periódica activa')"
+          :title="socketConectado ? 'Tiempo real activo' : 'Reconectando tiempo real con respaldo periódico'"
         >
           <span
             class="w-2 h-2 rounded-full"
-            :class="socketConectado ? 'bg-uv-verde' : (socketDisponible ? 'bg-slate-300' : 'bg-sky-300')"
+            :class="socketConectado ? 'bg-uv-verde' : 'bg-slate-300'"
           ></span>
-          <span class="hidden sm:inline">{{ socketConectado ? 'En vivo' : (socketDisponible ? 'Reconectando' : 'En línea') }}</span>
+          <span class="hidden sm:inline">{{ socketConectado ? 'En vivo' : 'Reconectando' }}</span>
         </div>
 
         <div class="flex items-center gap-2.5 pl-2.5 border-l border-white/20">
@@ -103,7 +103,7 @@
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { sesion, cerrarSesion } from '../stores/sesion'
-import { socketConectado, socketDisponible } from '../services/socket'
+import { socketConectado } from '../services/socket'
 
 const route = useRoute()
 const router = useRouter()

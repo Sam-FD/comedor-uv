@@ -2,7 +2,6 @@
 set -eu
 
 export PORT="${PORT:-10000}"
-mkdir -p /tmp/client_temp /tmp/proxy_temp /tmp/fastcgi_temp /tmp/uwsgi_temp /tmp/scgi_temp
 envsubst '${PORT}' < /app/nginx.conf.template > /etc/nginx/nginx.conf
 
 nginx

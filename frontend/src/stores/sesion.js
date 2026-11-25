@@ -1,5 +1,4 @@
 import { reactive } from 'vue'
-import '../utils/entorno'
 import api, { registrarManejadorNoAutorizado } from '../services/api'
 import { conectarSocket, desconectarSocket, unirseASalaActual } from '../services/socket'
 

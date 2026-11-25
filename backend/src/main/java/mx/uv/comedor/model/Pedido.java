@@ -11,6 +11,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -19,7 +20,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "pedidos")
+@Table(
+        name = "pedidos",
+        uniqueConstraints = @UniqueConstraint(
+                name = "uq_pedidos_fecha_referencia",
+                columnNames = {"fecha_operativa", "referencia"}
+        )
+)
 public class Pedido {
 
     @Id

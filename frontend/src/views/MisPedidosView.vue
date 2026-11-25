@@ -30,84 +30,10 @@
         </RouterLink>
       </div>
 
-      <div v-if="pedidosCerrados.length === 0" class="p-6 text-sm text-slate-500 text-center">
-        Aún no tienes pedidos concluidos en tu historial.
-      </div>
-
-      <template v-else>
-        <div class="md:hidden divide-y divide-slate-100">
-          <article v-for="pedido in pedidosCerrados" :key="`m-${pedido.id}`" class="p-4 space-y-2.5">
-            <div class="flex items-start justify-between gap-2">
-              <div>
-                <p class="text-base font-bold text-uv-azul tabular-nums">{{ pedido.referencia }}</p>
-                <p class="text-xs text-slate-500">{{ pedido.fechaOperativa }} · {{ etiquetaTurno(pedido.turno) }}</p>
-              </div>
-              <span class="px-2.5 py-0.5 rounded-full text-xs font-medium shrink-0" :class="claseEstadoCerrado(pedido.estadoPedido)">
-                {{ etiquetaEstadoPedido(pedido.estadoPedido) }}
-              </span>
-            </div>
-
-            <ul class="text-xs text-slate-700 bg-slate-50 rounded-md p-2.5 space-y-1">
-              <li v-for="d in pedido.detalles" :key="d.id" class="flex justify-between gap-2">
-                <span>{{ d.cantidad }} x {{ d.nombrePlatillo }}</span>
-                <span class="tabular-nums text-slate-500">{{ formatearMoneda(d.subtotal) }}</span>
-              </li>
-            </ul>
-
-            <div class="flex items-center justify-between gap-2 text-xs">
-              <span class="text-slate-600">
-                {{ etiquetaModalidadPago(pedido.modalidadPago) }} · {{ etiquetaEstadoPago(pedido.estadoPago) }}
-              </span>
-              <span class="text-sm font-bold text-slate-900 tabular-nums">
-                {{ formatearMoneda(pedido.total) }}
-              </span>
-            </div>
-          </article>
-        </div>
-
-        <div class="hidden md:block overflow-x-auto">
-          <table class="w-full text-sm text-left">
-            <thead class="bg-slate-50 text-xs uppercase text-slate-500 border-b border-slate-200">
-              <tr>
-                <th class="px-4 py-3">Referencia</th>
-                <th class="px-4 py-3">Fecha y turno</th>
-                <th class="px-4 py-3">Platillos</th>
-                <th class="px-4 py-3">Pago</th>
-                <th class="px-4 py-3">Estado</th>
-                <th class="px-4 py-3 text-right">Total</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100">
-              <tr v-for="pedido in pedidosCerrados" :key="pedido.id" class="hover:bg-slate-50">
-                <td class="px-4 py-3 font-bold text-uv-azul tabular-nums">{{ pedido.referencia }}</td>
-                <td class="px-4 py-3 text-slate-600">
-                  <div>{{ pedido.fechaOperativa }}</div>
-                  <div class="text-xs text-slate-400">{{ etiquetaTurno(pedido.turno) }}</div>
-                </td>
-                <td class="px-4 py-3 text-slate-700">
-                  <ul class="space-y-0.5 text-xs">
-                    <li v-for="d in pedido.detalles" :key="d.id">
-                      {{ d.cantidad }} x {{ d.nombrePlatillo }}
-                    </li>
-                  </ul>
-                </td>
-                <td class="px-4 py-3 text-xs text-slate-600">
-                  <div>{{ etiquetaModalidadPago(pedido.modalidadPago) }}</div>
-                  <div class="text-slate-400">{{ etiquetaEstadoPago(pedido.estadoPago) }}</div>
-                </td>
-                <td class="px-4 py-3">
-                  <span class="px-2.5 py-0.5 rounded-full text-xs font-medium" :class="claseEstadoCerrado(pedido.estadoPedido)">
-                    {{ etiquetaEstadoPedido(pedido.estadoPedido) }}
-                  </span>
-                </td>
-                <td class="px-4 py-3 text-right font-semibold tabular-nums">
-                  {{ formatearMoneda(pedido.total) }}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </template>
+      <ListaPedidosHistorial
+        :pedidos="pedidosCerrados"
+        mensaje-vacio="Aún no tienes pedidos concluidos en tu historial."
+      />
     </section>
   </div>
 </template>
@@ -117,14 +43,8 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 import api from '../services/api'
 import { suscribirEvento, socketConectado } from '../services/socket'
 import { actualizarUsuarioEnSesion, refrescarPerfil, sesion } from '../stores/sesion'
-import {
-  etiquetaEstadoPago,
-  etiquetaEstadoPedido,
-  etiquetaModalidadPago,
-  etiquetaTurno,
-  formatearMoneda
-} from '../utils/formatos'
 import BannerRestriccion from '../components/BannerRestriccion.vue'
+import ListaPedidosHistorial from '../components/ListaPedidosHistorial.vue'
 import PaseRecoleccion from '../components/PaseRecoleccion.vue'
 
 const pedidos = ref([])
@@ -135,12 +55,6 @@ const estadosActivos = ['recibido', 'en_preparacion', 'listo_para_recoger']
 
 const pedidoActivo = computed(() => pedidos.value.find((p) => estadosActivos.includes(p.estadoPedido)) || null)
 const pedidosCerrados = computed(() => pedidos.value.filter((p) => !estadosActivos.includes(p.estadoPedido)))
-
-function claseEstadoCerrado(estado) {
-  if (estado === 'entregado') return 'bg-uv-verde-claro text-uv-verde-oscuro'
-  if (estado === 'no_reclamado') return 'bg-red-50 text-red-700'
-  return 'bg-slate-100 text-slate-600'
-}
 
 async function cargarPedidos() {
   const { data } = await api.get('/pedidos/mis-pedidos')

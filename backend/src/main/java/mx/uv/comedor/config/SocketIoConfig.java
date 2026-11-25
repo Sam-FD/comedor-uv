@@ -14,9 +14,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SocketIoConfig {
 
-    @Value("${comedor.socket.habilitado:true}")
-    private boolean habilitado;
-
     @Value("${comedor.socket.host:0.0.0.0}")
     private String host;
 
@@ -30,6 +27,7 @@ public class SocketIoConfig {
         com.corundumstudio.socketio.Configuration config = new com.corundumstudio.socketio.Configuration();
         config.setHostname(host);
         config.setPort(port);
+        // La suscripcion a salas privadas de usuario y personal se valida mediante JWT en SocketNotificador
         config.setOrigin("*");
         config.setEnableCors(true);
 
@@ -52,7 +50,7 @@ public class SocketIoConfig {
 
     @PreDestroy
     public void detenerServidor() {
-        if (this.server != null && this.habilitado) {
+        if (this.server != null) {
             this.server.stop();
         }
     }

@@ -35,9 +35,6 @@
         <p class="text-xs text-slate-600 mt-0.5">
           {{ etiquetaModalidadPago(pedido.modalidadPago) }} ({{ etiquetaEstadoPago(pedido.estadoPago) }})
         </p>
-        <p v-if="transaccionPasarela" class="text-[11px] text-slate-500 mt-0.5 tabular-nums">
-          Pasarela {{ transaccionPasarela.modo === 'stripe_test' ? 'Stripe Test' : 'Sandbox' }} · {{ transaccionPasarela.transaccionId }} (**** {{ transaccionPasarela.ultimosDigitos }})
-        </p>
       </div>
     </div>
 
@@ -162,24 +159,10 @@ const ahoraMs = ref(Date.now())
 const confirmandoCancelacion = ref(false)
 const cancelando = ref(false)
 const errorCancelacion = ref('')
-const transaccionPasarela = ref(null)
 let timer = null
 let vencimientoTimer = null
 let vencimientoNotificado = false
 let reintentosVencimiento = 0
-
-async function cargarTransaccionPasarela() {
-  if (!props.pedido?.id || props.pedido.modalidadPago !== 'app_tarjeta') {
-    transaccionPasarela.value = null
-    return
-  }
-  try {
-    const res = await api.get(`/pagos/pedido/${props.pedido.id}`)
-    transaccionPasarela.value = res.status === 200 ? res.data : null
-  } catch {
-    transaccionPasarela.value = null
-  }
-}
 
 watch(
   () => [props.pedido?.id, props.pedido?.estadoPedido, props.pedido?.estadoPago],
@@ -192,7 +175,6 @@ watch(
       clearTimeout(vencimientoTimer)
       vencimientoTimer = null
     }
-    cargarTransaccionPasarela()
   },
   { immediate: true }
 )

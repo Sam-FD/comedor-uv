@@ -1,6 +1,6 @@
 package mx.uv.comedor.controller;
 
-import mx.uv.comedor.dto.CatalogoResponse;
+import mx.uv.comedor.dto.PlatilloDtos.CatalogoResponse;
 import mx.uv.comedor.service.PlatilloService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

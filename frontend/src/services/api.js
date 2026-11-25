@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { esAppMovil, obtenerApiBaseUrl } from '../utils/entorno'
+import { obtenerApiBaseUrl } from '../utils/entorno'
 
 const api = axios.create({
   baseURL: obtenerApiBaseUrl(),
@@ -44,10 +44,6 @@ api.interceptors.response.use(
       }
       if (typeof manejadorRedireccionLogin === 'function') {
         manejadorRedireccionLogin()
-      } else if (esAppMovil()) {
-        if (!window.location.hash.includes('/login')) {
-          window.location.hash = '#/login'
-        }
       } else if (window.location.pathname !== '/login') {
         window.location.href = '/login'
       }

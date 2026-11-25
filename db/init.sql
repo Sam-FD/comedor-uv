@@ -51,19 +51,6 @@ CREATE TABLE IF NOT EXISTS detalle_pedidos (
     subtotal DECIMAL(8,2) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS transacciones_pasarela (
-    id SERIAL PRIMARY KEY,
-    pedido_id INT UNIQUE NOT NULL REFERENCES pedidos(id),
-    transaccion_id VARCHAR(120) NOT NULL,
-    modo VARCHAR(30) NOT NULL,
-    estado_pasarela VARCHAR(40) NOT NULL,
-    estado_comedor VARCHAR(30) NOT NULL,
-    ultimos_digitos VARCHAR(4) NOT NULL,
-    monto DECIMAL(8,2) NOT NULL,
-    moneda VARCHAR(10) NOT NULL,
-    fecha_actualizacion TIMESTAMP NOT NULL DEFAULT NOW()
-);
-
 CREATE TABLE IF NOT EXISTS configuracion_operacion (
     clave VARCHAR(50) PRIMARY KEY,
     valor VARCHAR(100) NOT NULL,

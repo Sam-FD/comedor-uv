@@ -107,11 +107,6 @@ if errorlevel 1 (
     start "" http://localhost:5173
 )
 
-if exist "%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe" (
-    "%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe" reverse tcp:8080 tcp:8080 > nul 2>&1
-    "%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe" reverse tcp:9092 tcp:9092 > nul 2>&1
-)
-
 echo.
 echo ==================================================
 echo   Servicios activos:
@@ -119,7 +114,6 @@ echo   - Aplicacion Web: http://localhost:5173
 echo   - API Backend:    http://localhost:8080
 echo   - Socket.IO:      http://localhost:9092
 echo   - PostgreSQL:     localhost:5432 (comedor_uv)
-echo   - App Movil USB:  http://127.0.0.1:8080 (via adb reverse)
 echo.
 echo   Para detener los servicios, ejecutar detener.bat
 echo ==================================================

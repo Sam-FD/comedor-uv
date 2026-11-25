@@ -1,14 +1,14 @@
 package mx.uv.comedor.controller;
 
 import jakarta.validation.Valid;
-import mx.uv.comedor.dto.CambiarEstadoPedidoRequest;
-import mx.uv.comedor.dto.ComidaDelDiaRequest;
-import mx.uv.comedor.dto.DisponibilidadRequest;
-import mx.uv.comedor.dto.HistoricoResponse;
-import mx.uv.comedor.dto.PedidoDto;
-import mx.uv.comedor.dto.PlatilloDto;
-import mx.uv.comedor.dto.PlatilloRegularRequest;
-import mx.uv.comedor.dto.RecepcionRequest;
+import mx.uv.comedor.dto.PedidoDtos.CambiarEstadoPedidoRequest;
+import mx.uv.comedor.dto.PedidoDtos.HistoricoResponse;
+import mx.uv.comedor.dto.PedidoDtos.PedidoDto;
+import mx.uv.comedor.dto.PlatilloDtos.ComidaDelDiaRequest;
+import mx.uv.comedor.dto.PlatilloDtos.DisponibilidadRequest;
+import mx.uv.comedor.dto.PlatilloDtos.PlatilloDto;
+import mx.uv.comedor.dto.PlatilloDtos.PlatilloRegularRequest;
+import mx.uv.comedor.dto.PlatilloDtos.RecepcionRequest;
 import mx.uv.comedor.service.EstadoOperacionService;
 import mx.uv.comedor.service.PedidoService;
 import mx.uv.comedor.service.PlatilloService;

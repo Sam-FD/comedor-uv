@@ -3,13 +3,11 @@ import { ref } from 'vue'
 import { obtenerSocketUrl } from '../utils/entorno'
 
 export const socketConectado = ref(false)
-export const socketDisponible = ref(Boolean(obtenerSocketUrl()))
 
 let socket = null
 
 export function conectarSocket() {
   const urlSocket = obtenerSocketUrl()
-  socketDisponible.value = Boolean(urlSocket)
   if (!urlSocket) {
     return null
   }

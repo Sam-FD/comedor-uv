@@ -54,7 +54,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/auth/login", "/api/auth/registro").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/platillos/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/pagos/estado", "/api/salud").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/salud").permitAll()
                         .requestMatchers("/api/personal/**").hasRole("PERSONAL")
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().permitAll()

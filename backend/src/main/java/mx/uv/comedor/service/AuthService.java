@@ -1,10 +1,10 @@
 package mx.uv.comedor.service;
 
 import mx.uv.comedor.config.JwtService;
-import mx.uv.comedor.dto.AuthResponse;
-import mx.uv.comedor.dto.LoginRequest;
-import mx.uv.comedor.dto.RegistroRequest;
-import mx.uv.comedor.dto.UsuarioDto;
+import mx.uv.comedor.dto.AuthDtos.AuthResponse;
+import mx.uv.comedor.dto.AuthDtos.LoginRequest;
+import mx.uv.comedor.dto.AuthDtos.RegistroRequest;
+import mx.uv.comedor.dto.AuthDtos.UsuarioDto;
 import mx.uv.comedor.exception.RecursoNoEncontradoException;
 import mx.uv.comedor.exception.ReglaNegocioException;
 import mx.uv.comedor.model.ConstantesComedor;

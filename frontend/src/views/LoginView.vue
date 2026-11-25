@@ -1,6 +1,6 @@
 <template>
   <div class="flex-1 bg-[#F4F6F9] flex flex-col justify-center py-8 px-4">
-    <div class="max-w-md w-full mx-auto space-y-4">
+    <div class="max-w-md w-full mx-auto">
       <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
         <div class="bg-uv-azul text-white px-6 py-5 border-b-[3px] border-uv-verde">
           <div class="flex items-center gap-3">
@@ -137,92 +137,6 @@
           </p>
         </div>
       </div>
-
-      <div v-if="modoDemo" class="bg-white border border-slate-200 rounded-xl shadow-sm p-4 space-y-2.5">
-        <div class="flex items-center justify-between">
-          <h2 class="text-xs font-semibold uppercase tracking-wide text-slate-500">
-            Cuentas de prueba
-          </h2>
-          <span class="text-xs text-slate-500">Contraseña: <strong class="font-semibold text-slate-700">uv2026</strong></span>
-        </div>
-
-        <div class="space-y-1.5">
-          <button
-            v-for="cuenta in cuentasDemo"
-            :key="cuenta.credencial"
-            type="button"
-            @click="entrarConDemo(cuenta.credencial)"
-            class="w-full text-left px-3 py-2 rounded-lg border border-slate-200 hover:border-uv-azul hover:bg-uv-azul-claro/40 transition-colors flex items-center justify-between gap-2 text-xs"
-          >
-            <div>
-              <span class="font-semibold text-slate-800">{{ cuenta.nombre }}</span>
-              <span class="text-slate-500 ml-1">{{ cuenta.credencial }}</span>
-            </div>
-            <span class="px-2 py-0.5 rounded-full font-medium shrink-0" :class="cuenta.etiquetaClase">
-              {{ cuenta.etiqueta }}
-            </span>
-          </button>
-        </div>
-      </div>
-
-      <div v-if="appMovil && modoDemo" class="bg-white border border-slate-200 rounded-xl shadow-sm p-4 space-y-2.5">
-        <div class="flex items-center justify-between gap-2">
-          <h2 class="text-xs font-semibold uppercase tracking-wide text-slate-500">
-            Servidor backend (móvil)
-          </h2>
-          <button
-            type="button"
-            @click="mostrarConfigServidor = !mostrarConfigServidor"
-            class="text-xs font-medium text-uv-azul hover:underline"
-          >
-            {{ mostrarConfigServidor ? 'Ocultar' : 'Cambiar IP / URL' }}
-          </button>
-        </div>
-
-        <p v-if="!mostrarConfigServidor" class="text-xs text-slate-500 truncate">
-          Conectando a: <span class="font-medium text-slate-700">{{ servidorActual }}</span>
-        </p>
-
-        <div v-else class="space-y-2 pt-1">
-          <input
-            v-model="servidorInput"
-            type="url"
-            placeholder="https://servidor-comedor.onrender.com"
-            class="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-uv-azul/20 focus:border-uv-azul"
-          />
-          <div class="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              @click="aplicarServidorMovil"
-              class="px-3 py-1.5 rounded-md bg-uv-azul hover:bg-uv-azul-oscuro text-white text-xs font-medium"
-            >
-              Guardar URL
-            </button>
-            <button
-              v-if="modoDemo"
-              type="button"
-              @click="usarServidorUsb"
-              class="px-2.5 py-1.5 rounded-md border border-slate-300 text-xs text-slate-700 hover:bg-slate-50"
-            >
-              USB (127.0.0.1)
-            </button>
-            <button
-              v-if="modoDemo"
-              type="button"
-              @click="usarServidorEmulador"
-              class="px-2.5 py-1.5 rounded-md border border-slate-300 text-xs text-slate-600 hover:bg-slate-50"
-            >
-              Emulador (10.0.2.2)
-            </button>
-          </div>
-          <p v-if="errorServidor" class="text-[11px] text-red-700 font-medium">
-            {{ errorServidor }}
-          </p>
-          <p v-else-if="avisoServidor" class="text-[11px] text-uv-verde-oscuro font-medium">
-            {{ avisoServidor }}
-          </p>
-        </div>
-      </div>
     </div>
   </div>
 </template>
@@ -232,14 +146,6 @@ import { onMounted, onUnmounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import api, { extraerMensajeError } from '../services/api'
 import { guardarSesion } from '../stores/sesion'
-import { desconectarSocket } from '../services/socket'
-import {
-  esAppMovil,
-  esModoDemo,
-  guardarServidorMovil,
-  obtenerServidorMovilEfectivo,
-  obtenerServidorMovilGuardado
-} from '../utils/entorno'
 
 const router = useRouter()
 const modo = ref('login')
@@ -247,13 +153,6 @@ const cargando = ref(false)
 const esperaExtendida = ref(false)
 const error = ref('')
 let temporizadorEspera = null
-const appMovil = esAppMovil()
-const modoDemo = esModoDemo()
-const mostrarConfigServidor = ref(false)
-const servidorInput = ref(obtenerServidorMovilGuardado() || obtenerServidorMovilEfectivo())
-const servidorActual = ref(obtenerServidorMovilEfectivo())
-const avisoServidor = ref('')
-const errorServidor = ref('')
 
 const formLogin = reactive({
   credencialOCorreo: '',
@@ -267,50 +166,13 @@ const formRegistro = reactive({
   password: ''
 })
 
-const cuentasDemo = [
-  {
-    credencial: 'S22014510',
-    nombre: 'Laura Mendoza',
-    etiqueta: 'Sin faltas',
-    etiquetaClase: 'bg-uv-verde-claro text-uv-verde-oscuro'
-  },
-  {
-    credencial: 'S22018824',
-    nombre: 'Carlos Hernández',
-    etiqueta: '2 faltas',
-    etiquetaClase: 'bg-slate-100 text-slate-700'
-  },
-  {
-    credencial: 'S21009315',
-    nombre: 'Ana Sofia Ruiz',
-    etiqueta: 'Nivel 1: sin mostrador',
-    etiquetaClase: 'bg-amber-50 text-amber-800'
-  },
-  {
-    credencial: 'S23004109',
-    nombre: 'Diego Morales',
-    etiqueta: 'Nivel 2: solo catalogo',
-    etiquetaClase: 'bg-red-50 text-red-700'
-  },
-  {
-    credencial: 'P10001',
-    nombre: 'Rosa Ramirez',
-    etiqueta: 'Personal comedor',
-    etiquetaClase: 'bg-uv-azul-claro text-uv-azul'
-  }
-]
-
 function cambiarModo(nuevoModo) {
   modo.value = nuevoModo
   error.value = ''
 }
 
 function redirigirPorRol(rol) {
-  if (rol === 'personal') {
-    router.push('/personal')
-  } else {
-    router.push('/')
-  }
+  router.push(rol === 'personal' ? '/personal' : '/')
 }
 
 function iniciarTemporizadorEspera() {
@@ -369,43 +231,4 @@ onMounted(() => {
 onUnmounted(() => {
   detenerTemporizadorEspera()
 })
-
-async function entrarConDemo(credencial) {
-  modo.value = 'login'
-  formLogin.credencialOCorreo = credencial
-  formLogin.password = 'uv2026'
-  await enviarLogin()
-}
-
-function aplicarServidorMovil() {
-  errorServidor.value = ''
-  const res = guardarServidorMovil(servidorInput.value)
-  if (!res.ok) {
-    errorServidor.value = res.error
-    avisoServidor.value = ''
-    return
-  }
-  servidorActual.value = obtenerServidorMovilEfectivo()
-  servidorInput.value = res.url || servidorActual.value
-  desconectarSocket()
-  avisoServidor.value = `Servidor actualizado a ${servidorActual.value}`
-}
-
-function usarServidorUsb() {
-  errorServidor.value = ''
-  guardarServidorMovil('http://127.0.0.1:8080')
-  servidorInput.value = obtenerServidorMovilEfectivo()
-  servidorActual.value = servidorInput.value
-  desconectarSocket()
-  avisoServidor.value = `Conectado por USB a ${servidorActual.value}`
-}
-
-function usarServidorEmulador() {
-  errorServidor.value = ''
-  guardarServidorMovil('http://10.0.2.2:8080')
-  servidorInput.value = obtenerServidorMovilEfectivo()
-  servidorActual.value = servidorInput.value
-  desconectarSocket()
-  avisoServidor.value = `Configurado para emulador en ${servidorActual.value}`
-}
 </script>

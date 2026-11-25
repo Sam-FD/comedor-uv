@@ -118,28 +118,44 @@
         </div>
       </div>
 
-      <aside class="hidden lg:block space-y-4 lg:sticky lg:top-6">
-        <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-          <CarritoPanel
-            :carrito="carrito"
-            :turno-seleccionado="turnoSeleccionado"
-            v-model:modalidad-pago="modalidadPago"
-            :total-carrito="totalCarrito"
-            :recepcion-abierta="catalogo.recepcionAbierta"
-            :sin-pedidos-en-linea="sinPedidosEnLinea"
-            :solo-app-tarjeta="soloAppTarjeta"
-            :pedido-activo="pedidoActivo"
-            :bloqueo-agregar="bloqueoAgregar"
-            :enviando="enviando"
-            :error-pedido="errorPedido"
-            :estado-pasarela="estadoPasarela"
-            @aumentar="aumentarCantidad"
-            @disminuir="disminuirCantidad"
-            @enviar="enviarPedido"
-          />
+      <aside class="space-y-4 lg:sticky lg:top-6">
+        <div
+          :class="mostrarCarritoMovil ? 'fixed inset-0 bg-slate-900/40 z-40 flex items-end lg:static lg:bg-transparent lg:z-auto lg:block' : 'hidden lg:block'"
+          @click.self="mostrarCarritoMovil = false"
+        >
+          <div class="w-full bg-white border border-slate-200 shadow-sm rounded-t-2xl p-5 pb-[max(1.25rem,calc(var(--safe-area-inset-bottom,0px)+0.75rem))] max-h-[85vh] overflow-y-auto lg:rounded-xl lg:p-5 lg:max-h-none lg:overflow-visible">
+            <div class="flex justify-end mb-3 lg:hidden">
+              <button
+                type="button"
+                @click="mostrarCarritoMovil = false"
+                class="text-xs font-medium text-slate-500 hover:text-slate-800"
+              >
+                Cerrar
+              </button>
+            </div>
+
+            <CarritoPanel
+              :carrito="carrito"
+              :turno-seleccionado="turnoSeleccionado"
+              v-model:modalidad-pago="modalidadPago"
+              :total-carrito="totalCarrito"
+              :recepcion-abierta="catalogo.recepcionAbierta"
+              :sin-pedidos-en-linea="sinPedidosEnLinea"
+              :solo-app-tarjeta="soloAppTarjeta"
+              :pedido-activo="pedidoActivo"
+              :bloqueo-agregar="bloqueoAgregar"
+              :enviando="enviando"
+              :error-pedido="errorPedido"
+              @aumentar="aumentarCantidad"
+              @disminuir="disminuirCantidad"
+              @enviar="enviarPedido"
+            />
+          </div>
         </div>
 
-        <RecordatorioReglas />
+        <div class="hidden lg:block">
+          <RecordatorioReglas />
+        </div>
       </aside>
     </div>
 
@@ -162,43 +178,6 @@
       >
         Ver tu pedido
       </button>
-    </div>
-
-    <div
-      v-if="mostrarCarritoMovil"
-      class="lg:hidden fixed inset-0 bg-slate-900/40 z-40 flex items-end"
-      @click.self="mostrarCarritoMovil = false"
-    >
-      <div class="w-full bg-white rounded-t-2xl border-t border-slate-200 p-5 pb-[max(1.25rem,calc(var(--safe-area-inset-bottom,0px)+0.75rem))] max-h-[85vh] overflow-y-auto space-y-3">
-        <div class="flex justify-end">
-          <button
-            type="button"
-            data-cerrar-modal-movil
-            @click="mostrarCarritoMovil = false"
-            class="text-xs font-medium text-slate-500 hover:text-slate-800"
-          >
-            Cerrar
-          </button>
-        </div>
-
-        <CarritoPanel
-          :carrito="carrito"
-          :turno-seleccionado="turnoSeleccionado"
-          v-model:modalidad-pago="modalidadPago"
-          :total-carrito="totalCarrito"
-          :recepcion-abierta="catalogo.recepcionAbierta"
-          :sin-pedidos-en-linea="sinPedidosEnLinea"
-          :solo-app-tarjeta="soloAppTarjeta"
-          :pedido-activo="pedidoActivo"
-          :bloqueo-agregar="bloqueoAgregar"
-          :enviando="enviando"
-          :error-pedido="errorPedido"
-          :estado-pasarela="estadoPasarela"
-          @aumentar="aumentarCantidad"
-          @disminuir="disminuirCantidad"
-          @enviar="enviarPedido"
-        />
-      </div>
     </div>
   </div>
 </template>
@@ -232,7 +211,6 @@ const avisoEnVivo = ref('')
 const cargandoCatalogo = ref(true)
 const errorCatalogo = ref('')
 const mostrarCarritoMovil = ref(false)
-const estadoPasarela = ref(null)
 
 const desuscripciones = []
 let turnoInicialAplicado = false
@@ -369,7 +347,7 @@ async function enviarPedido(datosPago = {}) {
         platilloId: i.platillo.id,
         cantidad: i.cantidad
       })),
-      tarjetaPrueba: modalidadFinal === 'app_tarjeta' ? (datosPago?.tarjetaPrueba || null) : null
+      numeroTarjeta: modalidadFinal === 'app_tarjeta' ? (datosPago?.numeroTarjeta || null) : null
     }
     const { data } = await api.post('/pedidos', payload)
     pedidoActivo.value = data
@@ -385,12 +363,10 @@ async function enviarPedido(datosPago = {}) {
   }
 }
 
-async function cargarEstadoPasarela() {
-  try {
-    const { data } = await api.get('/pagos/estado')
-    estadoPasarela.value = data
-  } catch {
-    estadoPasarela.value = null
+function manejarBotonAtras(e) {
+  if (mostrarCarritoMovil.value) {
+    e.preventDefault()
+    mostrarCarritoMovil.value = false
   }
 }
 
@@ -406,7 +382,7 @@ async function recargarTodo() {
     if (soloAppTarjeta.value) {
       modalidadPago.value = 'app_tarjeta'
     }
-    await Promise.all([cargarCatalogo(), cargarPedidoActivo(), cargarEstadoPasarela()])
+    await Promise.all([cargarCatalogo(), cargarPedidoActivo()])
   } catch (err) {
     errorCatalogo.value = extraerMensajeError(err, 'No se pudo cargar el menú del comedor.')
   } finally {
@@ -415,6 +391,7 @@ async function recargarTodo() {
 }
 
 onMounted(async () => {
+  window.addEventListener('app-back', manejarBotonAtras)
   await recargarTodo()
 
   respaldoTimer = setInterval(() => {
@@ -457,6 +434,7 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
+  window.removeEventListener('app-back', manejarBotonAtras)
   if (respaldoTimer) clearInterval(respaldoTimer)
   desuscripciones.forEach((fn) => fn())
 })

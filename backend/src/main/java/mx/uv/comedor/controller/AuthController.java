@@ -2,10 +2,10 @@ package mx.uv.comedor.controller;
 
 import jakarta.validation.Valid;
 import mx.uv.comedor.config.UsuarioAutenticado;
-import mx.uv.comedor.dto.AuthResponse;
-import mx.uv.comedor.dto.LoginRequest;
-import mx.uv.comedor.dto.RegistroRequest;
-import mx.uv.comedor.dto.UsuarioDto;
+import mx.uv.comedor.dto.AuthDtos.AuthResponse;
+import mx.uv.comedor.dto.AuthDtos.LoginRequest;
+import mx.uv.comedor.dto.AuthDtos.RegistroRequest;
+import mx.uv.comedor.dto.AuthDtos.UsuarioDto;
 import mx.uv.comedor.service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

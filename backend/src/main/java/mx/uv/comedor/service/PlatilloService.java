@@ -1,10 +1,10 @@
 package mx.uv.comedor.service;
 
 import mx.uv.comedor.config.ReglasComedorProperties;
-import mx.uv.comedor.dto.CatalogoResponse;
-import mx.uv.comedor.dto.ComidaDelDiaRequest;
-import mx.uv.comedor.dto.PlatilloDto;
-import mx.uv.comedor.dto.PlatilloRegularRequest;
+import mx.uv.comedor.dto.PlatilloDtos.CatalogoResponse;
+import mx.uv.comedor.dto.PlatilloDtos.ComidaDelDiaRequest;
+import mx.uv.comedor.dto.PlatilloDtos.PlatilloDto;
+import mx.uv.comedor.dto.PlatilloDtos.PlatilloRegularRequest;
 import mx.uv.comedor.exception.RecursoNoEncontradoException;
 import mx.uv.comedor.exception.ReglaNegocioException;
 import mx.uv.comedor.model.ConstantesComedor;

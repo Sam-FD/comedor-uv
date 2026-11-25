@@ -2,9 +2,9 @@ package mx.uv.comedor.service;
 
 import mx.uv.comedor.config.JwtService;
 import mx.uv.comedor.config.ReglasComedorProperties;
-import mx.uv.comedor.dto.AuthResponse;
-import mx.uv.comedor.dto.LoginRequest;
-import mx.uv.comedor.dto.RegistroRequest;
+import mx.uv.comedor.dto.AuthDtos.AuthResponse;
+import mx.uv.comedor.dto.AuthDtos.LoginRequest;
+import mx.uv.comedor.dto.AuthDtos.RegistroRequest;
 import mx.uv.comedor.exception.ReglaNegocioException;
 import mx.uv.comedor.model.ConstantesComedor;
 import mx.uv.comedor.model.Usuario;
@@ -64,7 +64,7 @@ class AuthServiceTest {
         assertEquals("alumno@estudiantes.uv.mx", res.usuario().correo());
         assertEquals(ConstantesComedor.ROL_ESTUDIANTE, res.usuario().rol());
         assertFalse(res.token().isBlank());
-        assertEquals(99, jwtService.obtenerUserId(res.token()));
+        assertEquals(99, jwtService.extraerClaims(res.token()).get("userId", Integer.class));
     }
 
     @Test

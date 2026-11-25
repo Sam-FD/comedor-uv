@@ -55,20 +55,4 @@ public class JwtService {
             return Optional.empty();
         }
     }
-
-    public boolean esValido(String token) {
-        return validarYExtraerClaims(token).isPresent();
-    }
-
-    public Integer obtenerUserId(String token) {
-        return extraerClaims(token).get("userId", Integer.class);
-    }
-
-    public String obtenerRol(String token) {
-        return extraerClaims(token).get("rol", String.class);
-    }
-
-    public String obtenerCredencial(String token) {
-        return extraerClaims(token).getSubject();
-    }
 }
